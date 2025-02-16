@@ -8,18 +8,15 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.screen.VirtualScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
+import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 
 /**
@@ -31,7 +28,10 @@ public class Tresor {
     private static final @NotNull Logger log = LoggerFactory.getLogger(Tresor.class);
 
     public static void main(@NotNull String @NotNull [] args) throws IOException {
-        Terminal terminal = new DefaultTerminalFactory().createTerminal();
+
+        TelnetTerminalServer server = new TelnetTerminalServer(23);
+
+        TelnetTerminal terminal = server.acceptConnection();
         Screen screen = new TerminalScreen(terminal);
         TextGraphics tGraphics = screen.newTextGraphics();
 

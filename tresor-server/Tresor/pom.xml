@@ -17,13 +17,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.khubla.ktelnet</groupId>
-            <artifactId>ktelnet</artifactId>
-            <version>LATEST</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.4.12</version>
