@@ -9,6 +9,7 @@ namespace websocketpp::lib::asio {
         static constexpr int max_connections = 5; //idk 5 sounds good to me
     };
 }
+
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/client.hpp>
 
@@ -52,7 +53,7 @@ void on_message(websocketpp::connection_hdl hdl, client::message_ptr msg) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <websocket_url>" << std::endl;
+        std::cerr << "Please care about the Usage: " << argv[0] << " <websocket_url>" << std::endl;
         return 1;
     }
 
