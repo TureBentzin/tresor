@@ -1,1 +1,3 @@
-cmake-buld-debug-*/
+cmake-build-debug-visual-studio/
+cmake-bulid-release-visual-studio/
+.idea/

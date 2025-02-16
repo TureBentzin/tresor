@@ -1,10 +1,23 @@
+#define _WEBSOCKETPP_CPP11_STL_
+#define ASIO_STANDALONE
+
+// Compatibility patch
+
+
+namespace websocketpp::lib::asio {
+    struct socket_base {
+        static constexpr int max_connections = 5; //idk 5 sounds good to me
+    };
+}
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/client.hpp>
+
 #include <iostream>
 #include <conio.h>
 #include <thread>
 #include <string>
 #include <nlohmann/json.hpp>
+
 
 using json = nlohmann::json;
 typedef websocketpp::client<websocketpp::config::asio_client> client;
@@ -25,19 +38,19 @@ void on_message(websocketpp::connection_hdl hdl, client::message_ptr msg) {
 }
 
 
-void key_input_loop() {
+[[noreturn]] void key_input_loop() {
     while (true) {
         int key = _getch();
         json msg;
         msg["type"] = "input";
-        msg["key"] = std::string(1, (char)key);
+        msg["key"] = std::string(1, (char) key);
 
         std::string payload = msg.dump();
         ws_client.send(global_hdl, payload, websocketpp::frame::opcode::text);
     }
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <websocket_url>" << std::endl;
         return 1;
@@ -45,10 +58,10 @@ int main(int argc, char* argv[]) {
 
     std::string ws_url = argv[1];
 
-    // Initialize client
+    //init
     ws_client.init_asio();
 
-    // Register message handler
+
     ws_client.set_message_handler(&on_message);
 
     websocketpp::lib::error_code ec;

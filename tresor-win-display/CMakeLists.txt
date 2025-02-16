@@ -1,44 +1,47 @@
 cmake_minimum_required(VERSION 3.16)
 project(TresorDisplay LANGUAGES CXX)
 
-# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Fetch dependencies
 include(FetchContent)
 
 # Fetch websocketpp
 FetchContent_Declare(
-    websocketpp
-    GIT_REPOSITORY https://github.com/zaphoyd/websocketpp.git
-    GIT_TAG master
+        websocketpp
+        GIT_REPOSITORY https://github.com/zaphoyd/websocketpp.git
+        GIT_TAG 0.8.2 # Use a known stable release
 )
 FetchContent_MakeAvailable(websocketpp)
 
+# Fetch standalone asio
+FetchContent_Declare(
+        asio
+        GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+        GIT_TAG asio-1-22-1
+)
+FetchContent_MakeAvailable(asio)
+
 # Fetch nlohmann/json
 FetchContent_Declare(
-    json
-    GIT_REPOSITORY https://github.com/nlohmann/json.git
-    GIT_TAG v3.11.3
+        json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.3
 )
 FetchContent_MakeAvailable(json)
 
-# Define the executable
-add_executable(TresorDisplay tresor-display.cpp)
+add_executable(TresorDisplay src/tresor-display.cpp)
 
-# Include directories
 target_include_directories(TresorDisplay PRIVATE
-    ${websocketpp_SOURCE_DIR}
-    ${json_SOURCE_DIR}/single_include
+        ${websocketpp_SOURCE_DIR}
+        ${asio_SOURCE_DIR}/asio/include
+        ${json_SOURCE_DIR}/single_include
 )
 
-# Link libraries
 if (WIN32)
     target_link_libraries(TresorDisplay ws2_32)
 endif()
 
-# Enable higher warning levels for better code quality
 if (MSVC)
     target_compile_options(TresorDisplay PRIVATE /W4)
 else()
