@@ -27,12 +27,16 @@ websocketpp::connection_hdl global_hdl;
 client ws_client;
 
 void on_message(websocketpp::connection_hdl hdl, client::message_ptr msg) {
-    system("cls");
+    system("cls"); // very good support...
     try {
-        auto data = json::parse(msg->get_payload());
-        if (data.contains("content")) {
-            std::cout << data["content"].get<std::string>() << std::endl;
-        }
+        //std::cout << "Received: " << msg->get_payload() << std::endl;
+        //auto data = json::parse(msg->get_payload());
+        //if (data.contains("content")) {
+        //    std::cout << data["content"].get<std::string>() << std::endl;
+        //}
+
+        std::cout << msg->get_payload() << std::endl;
+
     } catch (const std::exception &e) {
         std::cerr << "Failed to parse message: " << e.what() << std::endl;
     }
@@ -42,11 +46,20 @@ void on_message(websocketpp::connection_hdl hdl, client::message_ptr msg) {
 [[noreturn]] void key_input_loop() {
     while (true) {
         int key = _getch();
-        json msg;
-        msg["type"] = "input";
-        msg["key"] = std::string(1, (char) key);
 
-        std::string payload = msg.dump();
+        //check for escape key or CTRL + C
+        if (key == 27 || (key == 3)) {
+            std::cout << "Exiting..." << std::endl;
+            ws_client.close(global_hdl, websocketpp::close::status::normal, "Exiting");
+            exit(0);
+        }
+
+        //json msg;
+        //  msg["type"] = "input";
+        // msg["key"] = std::string(1, (char) key);
+
+        //std::string payload = msg.dump();
+        std::string payload = std::string(1, (char) key);
         ws_client.send(global_hdl, payload, websocketpp::frame::opcode::text);
     }
 }
@@ -77,6 +90,8 @@ int main(int argc, char *argv[]) {
 
     ws_client.connect(con);
 
+
+    std::cout << "Press ESC to exit" << std::endl;
 
     std::thread input_thread(key_input_loop);
     ws_client.run();
