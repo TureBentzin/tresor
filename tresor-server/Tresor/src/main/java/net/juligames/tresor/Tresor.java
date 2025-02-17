@@ -10,12 +10,15 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
+import net.juligames.tresor.lang.Translations;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Set;
 
 
 /**
@@ -32,24 +35,13 @@ public class Tresor {
         ServerSocket serverSocket = server.getServerSocket();
         log.info("Server started on {}:{}", serverSocket.getInetAddress(), serverSocket.getLocalPort());
 
+        Set<String> availableMessageSets = Translations.getAvailableMessageSets();
+        //TODO provide message sets
+
         while (true) {
             log.info("Waiting for connection...");
             TelnetTerminal terminal = server.acceptConnection();
              new TresorGUI(terminal);
-
-            /*
-            TerminalScreen screen = new TerminalScreen(terminal);
-            WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
-            screen.startScreen();
-            Window w = new BasicWindow("Hello");
-            //w.setTheme(new SimpleTheme(TextColor.ANSI.YELLOW, TextColor.ANSI.BLACK));
-            w.setComponent(new com.googlecode.lanterna.gui2.Label("Hello, World!"));
-
-
-            gui.addWindowAndWait(w);
-
-             */
-
             log.info("Accepted connection from {}", terminal.getRemoteSocketAddress());
         }
 

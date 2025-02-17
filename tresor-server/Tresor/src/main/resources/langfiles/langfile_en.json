@@ -8,7 +8,6 @@
       "title": "Login"
     }
   },
-
   "menu": {
     "about": {
       "title": "About",
@@ -16,6 +15,11 @@
         "title": "Version",
         "content": "Running {brand} version {version}!\n  -> {commit} on {branch}\nCompiled on {buildTime} by {buildUser}."
       }
+    },
+    "quit": {
+      "title": "Quit",
+      "entry": "Quit",
+      "content": "Do you really want to quit?"
     }
   }
 }

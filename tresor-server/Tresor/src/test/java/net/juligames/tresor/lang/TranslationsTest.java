@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +40,11 @@ class TranslationsTest {
 
     @Test
     void getDefaultMessageSet() {
+        Map<String,String> defaultMessageSet = Translations.getDefaultMessageSet();
+        defaultMessageSet.forEach((key, value) -> {
+            log.info("Key: {}, Value: {}", key, value);
+        });
+        assertFalse(defaultMessageSet.isEmpty());
     }
 
     @Test

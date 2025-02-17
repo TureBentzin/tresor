@@ -16,8 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -32,7 +34,7 @@ public final class TresorGUI {
     private final @NotNull Screen screen;
     private @Nullable WindowBasedTextGUI gui;
 
-    private @NotNull Map<String, String> messageSet = new HashMap<>();
+    private @NotNull String messageSet = Translations.DEFAULT_SET;
 
 
     private final @NotNull ArrayBlockingQueue<Long> timestamps = new ArrayBlockingQueue<>(64);
@@ -42,7 +44,6 @@ public final class TresorGUI {
     public TresorGUI(@NotNull TelnetTerminal terminal) throws IOException {
         this.terminal = terminal;
         this.screen = new TerminalScreen(terminal);
-        messageSet = Translations.getDefaultMessageSet();
 
         //execute handle asynchronously
         Thread thread = new Thread(threadGroup, () -> {
@@ -99,19 +100,19 @@ public final class TresorGUI {
     }
 
     public @NotNull WindowBasedTextGUI getGui() {
-        return gui;
+        return Objects.requireNonNull(gui, "GUI not initialized");
     }
 
     public @NotNull String getText(@NotNull String key, boolean tiny) {
-        return messageSet.getOrDefault(key, (tiny ? "?" : "?" + key + "?"));
+        return Translations.getMessage(key, messageSet, tiny);
     }
 
     public @NotNull String getTextWithParams(@NotNull String key, boolean tiny, @NotNull Map<String, String> params) {
-        String orDefault = messageSet.getOrDefault(key, (tiny ? "?" : "?" + key + "?"));
+        String message = getText(key, tiny);
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            orDefault = orDefault.replace("{" + entry.getKey() + "}", entry.getValue());
+            message = message.replace("{" + entry.getKey() + "}", entry.getValue());
         }
-        return orDefault;
+        return message;
     }
 
 
