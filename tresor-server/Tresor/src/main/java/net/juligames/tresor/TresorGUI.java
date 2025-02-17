@@ -33,7 +33,7 @@ public final class TresorGUI {
     private final @NotNull TextGraphics textGraphics;
     private @NotNull TerminalSize terminalSize;
 
-    private @NotNull Theme theme = Theme.DEFAULT;
+    private @NotNull Theme theme = Theme.VAMPIRE;
 
     private final @NotNull ArrayBlockingQueue<Long> timestamps = new ArrayBlockingQueue<>(64);
 
@@ -78,8 +78,8 @@ public final class TresorGUI {
 
             screen.startScreen();
             terminal.setTitle("TresorGUI");
-            textGraphics.setBackgroundColor(TextColor.ANSI.YELLOW_BRIGHT);
-            textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
+            textGraphics.setBackgroundColor(theme.backgroundColor());
+            textGraphics.setForegroundColor(theme.highlightForegroundColor());
             loop:
             while (true) {
                 {
@@ -153,13 +153,13 @@ public final class TresorGUI {
     private void drawApplicationFrame() {
         int width = terminalSize.getColumns();
         int height = terminalSize.getRows();
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-        textGraphics.drawLine(2, 2, width - 2, 2, ' ');
-        textGraphics.drawLine(2, height - 2, width - 2, height - 2, ' ');
-        textGraphics.drawLine(2, 2, 2, height - 2, ' ');
-        textGraphics.drawLine(width - 2, 2, width - 2, height - 2, ' ');
+        textGraphics.setBackgroundColor(theme.borderColor());
+        textGraphics.drawLine(2, 2, width - 2, 2, theme.borderHorizontal());
+        textGraphics.drawLine(2, height - 2, width - 2, height - 2, theme.borderHorizontal());
+        textGraphics.drawLine(2, 2, 2, height - 2, theme.borderVertical());
+        textGraphics.drawLine(width - 2, 2, width - 2, height - 2, theme.borderVertical());
 
-        textGraphics.setBackgroundColor(TextColor.ANSI.YELLOW_BRIGHT);
+        textGraphics.setBackgroundColor(theme.backgroundColor());
     }
 
     // TRESOR GUI - MOTD (centerd) - VERSION 1.0
@@ -226,15 +226,15 @@ public final class TresorGUI {
         for (int i = 0; i < menuItems.size(); i++) {
             String menuItem = menuItems.get(i);
             if (i == activeMenu) {
-                textGraphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+                textGraphics.setBackgroundColor(theme.highlightBackgroundColor());
+                textGraphics.setForegroundColor(theme.highlightForegroundColor());
             } else {
-                textGraphics.setBackgroundColor(TextColor.ANSI.YELLOW_BRIGHT);
-                textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
+                textGraphics.setBackgroundColor(theme.backgroundColor());
+                textGraphics.setForegroundColor(theme.foregroundColor());
             }
             textGraphics.putString(x, y, menuItem);
-            textGraphics.setBackgroundColor(TextColor.ANSI.YELLOW_BRIGHT);
-            textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
+            textGraphics.setBackgroundColor(theme.backgroundColor());
+            textGraphics.setForegroundColor(theme.foregroundColor());
             //print menu spacing
             x += menuItem.length();
             textGraphics.putString(x, y, " ".repeat(spacing));
@@ -252,25 +252,34 @@ public final class TresorGUI {
 
         int y = (height - 5) / 2;
         int requiredWidth = Math.max(title.length(), message.length()) + 2;
+        if (requiredWidth > width) {
+            return false;
+        }
         int x = (width - requiredWidth) / 2;
-
         int titleX = (width - title.length()) / 2;
+
+        int requiredHeight = 5;
+
+        if (y + requiredHeight > height) {
+            return false;
+        }
+
         textGraphics.putString(titleX, y, title);
         textGraphics.putString(x, y + 1, message);
 
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLUE);
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-        textGraphics.drawLine(x - 1, y - 1, x + requiredWidth, y - 1, ' ');
-        textGraphics.drawLine(x - 1, y - 1, x - 1, y + 3, ' ');
-        textGraphics.drawLine(x - 1, y + 3, x + requiredWidth, y + 3, ' ');
-        textGraphics.drawLine(x + requiredWidth, y - 1, x + requiredWidth, y + 3, ' ');
+        textGraphics.setBackgroundColor(theme.highlightBackgroundColor());
+        textGraphics.setForegroundColor(theme.highlightForegroundColor());
+        textGraphics.drawLine(x - 1, y - 1, x + requiredWidth, y - 1, theme.borderHorizontal());
+        textGraphics.drawLine(x - 1, y - 1, x - 1, y + 3, theme.borderVertical());
+        textGraphics.drawLine(x - 1, y + 3, x + requiredWidth, y + 3, theme.borderHorizontal());
+        textGraphics.drawLine(x + requiredWidth, y - 1, x + requiredWidth, y + 3, theme.borderVertical());
 
-        textGraphics.drawLine(x - 1, y + 4, x + requiredWidth, y + 4, ' ');
+        textGraphics.drawLine(x - 1, y + 4, x + requiredWidth, y + 4, theme.borderHorizontal());
         textGraphics.putString(x, y + 4, "OK");
 
 
-        textGraphics.setBackgroundColor(TextColor.ANSI.YELLOW_BRIGHT);
-        textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
+        textGraphics.setBackgroundColor(theme.backgroundColor());
+        textGraphics.setForegroundColor(theme.foregroundColor());
 
         return true;
     }
@@ -294,6 +303,7 @@ public final class TresorGUI {
 
     /**
      * Never hold this object for longer then a single draw cycle.
+     *
      * @return the current theme
      */
     public @NotNull Theme getTheme() {
