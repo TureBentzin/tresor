@@ -58,11 +58,18 @@ public class DashboardView {
         String branch = ProjectPropertiesUtil.getGitBranch();
 
         return new MenuItem(tresorGUI.getText("menu.about.version.title", false),
-                () -> MessageDialog.showMessageDialog(
-                        tresorGUI.getGui(),
-                        tresorGUI.getText("menu.about.version.title", false),
-                        tresorGUI.getTextWithParams("menu.about.version.content", false, Map.of("brand", brand, "version", version, "buildTime", buildTime, "buildUser", buildUser, "commit", commit, "branch", branch))
-                ));
+                () -> MessageDialog.showMessageDialog(tresorGUI.getGui(),
+                        tresorGUI.getText("menu.about.version.title",
+                                false), tresorGUI.getTextWithParams("menu.about.version.content",
+                                false,
+                                Map.of(
+                                        "brand", brand,
+                                        "version", version,
+                                        "buildTime", buildTime,
+                                        "buildUser", buildUser,
+                                        "commit", commit,
+                                        "branch", branch
+                                ))));
     }
 
 
