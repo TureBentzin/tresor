@@ -9,6 +9,8 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
+import net.juligames.tresor.elements.ApplicationFrame;
+import net.juligames.tresor.elements.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -33,7 +35,9 @@ public final class TresorGUI {
     private final @NotNull TextGraphics textGraphics;
     private @NotNull TerminalSize terminalSize;
 
-    private @NotNull Theme theme = Theme.VAMPIRE;
+    private @NotNull ApplicationFrame applicationFrame = new ApplicationFrame();
+
+    private @NotNull Theme theme = Theme.DEFAULT;
 
     private final @NotNull ArrayBlockingQueue<Long> timestamps = new ArrayBlockingQueue<>(64);
 
