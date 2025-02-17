@@ -15,11 +15,6 @@
 
     </properties>
 
-    <scm>
-        <url>file://${project.basedir}/.git</url>
-        <connection>scm:git:file://${project.basedir}</connection>
-        <developerConnection>scm:git:file://${project.basedir}</developerConnection>
-    </scm>
 
     <dependencies>
         <dependency>
@@ -66,25 +61,6 @@
         </resources>
 
         <plugins>
-            <!-- Plugin to generate build number -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <doCheck>true</doCheck>
-                    <doUpdate>true</doUpdate>
-                    <format>${timestamp}</format>
-                </configuration>
-            </plugin>
 
             <!-- Plugin to get Git commit hash -->
             <plugin>

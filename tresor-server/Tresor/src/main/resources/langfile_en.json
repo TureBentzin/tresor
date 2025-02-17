@@ -1,7 +1,8 @@
 {
   "window": {
     "dashboard": {
-      "title": "TresorGUI"
+      "title": "TresorGUI",
+      "content": "Welcome to TresorGUI"
     },
     "login": {
       "title": "Login"
@@ -10,8 +11,11 @@
 
   "menu": {
     "about": {
-      "title": "About"
+      "title": "About",
+      "version": {
+        "title": "Version",
+        "content": "Running {brand} version {version}!\n  -> {commit} on {branch}\nCompiled on {buildTime} by {buildUser}."
+      }
     }
-  },
-
+  }
 }

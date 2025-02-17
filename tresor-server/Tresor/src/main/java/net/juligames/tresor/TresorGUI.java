@@ -7,7 +7,10 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import net.juligames.tresor.lang.Translations;
+import net.juligames.tresor.theme.BefatorTheme;
+import net.juligames.tresor.views.DashboardView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +30,7 @@ public final class TresorGUI {
 
     private final @NotNull TelnetTerminal terminal;
     private final @NotNull Screen screen;
-    private final @NotNull TextGraphics textGraphics;
-    private final @NotNull WindowBasedTextGUI gui;
+    private @Nullable WindowBasedTextGUI gui;
 
     private @NotNull Map<String, String> messageSet = new HashMap<>();
 
@@ -40,10 +42,6 @@ public final class TresorGUI {
     public TresorGUI(@NotNull TelnetTerminal terminal) throws IOException {
         this.terminal = terminal;
         this.screen = new TerminalScreen(terminal);
-        this.textGraphics = screen.newTextGraphics();
-
-        gui = new MultiWindowTextGUI(screen);
-
         messageSet = Translations.getDefaultMessageSet();
 
         //execute handle asynchronously
@@ -71,9 +69,12 @@ public final class TresorGUI {
     }
 
     private void handle() throws IOException {
+        gui = new MultiWindowTextGUI(screen);
+        screen.startScreen();
         try (terminal) {
+            //gui.setTheme(new BefatorTheme());
             log.info("Starting a TresorGUI for {}", terminal.getRemoteSocketAddress());
-            screen.startScreen();
+            gui.addWindowAndWait(DashboardView.getDashboardWindow(this));
 
 
         } catch (SocketException e) {
@@ -92,9 +93,6 @@ public final class TresorGUI {
         return terminal;
     }
 
-    public @NotNull TextGraphics getTextGraphics() {
-        return textGraphics;
-    }
 
     public long @NotNull [] getTimestamps() {
         return timestamps.stream().mapToLong(Long::longValue).toArray();

@@ -18,21 +18,15 @@ class MavenPropertiesUtilTest {
 
     @Test
     void getArtifactId() {
-        String artifactId = MavenPropertiesUtil.getArtifactId();
+        String artifactId = ProjectPropertiesUtil.getArtifactId();
         log.info("ArtifactId: {}", artifactId);
         assertNotNull(artifactId);
     }
 
-    @Test
-    void getBuildNumber() {
-        String buildNumber = MavenPropertiesUtil.getBuildNumber();
-        log.info("BuildNumber: {}", buildNumber);
-        assertNotNull(buildNumber);
-    }
 
     @Test
     void getGitCommit() {
-        String gitCommit = MavenPropertiesUtil.getGitCommit();
+        String gitCommit = ProjectPropertiesUtil.getGitCommit();
         log.info("GitCommit: {}", gitCommit);
         assertNotNull(gitCommit);
     }
