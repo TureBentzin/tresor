@@ -1,0 +1,17 @@
+{
+  "window": {
+    "dashboard": {
+      "title": "TresorGUI"
+    },
+    "login": {
+      "title": "Login"
+    }
+  },
+
+  "menu": {
+    "about": {
+      "title": "About"
+    }
+  },
+
+}
