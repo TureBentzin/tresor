@@ -33,6 +33,8 @@ public final class TresorGUI {
     private final @NotNull TextGraphics textGraphics;
     private @NotNull TerminalSize terminalSize;
 
+    private @NotNull Theme theme = Theme.DEFAULT;
+
     private final @NotNull ArrayBlockingQueue<Long> timestamps = new ArrayBlockingQueue<>(64);
 
     private static final @NotNull ThreadGroup threadGroup = new ThreadGroup("TresorGUI");
@@ -288,6 +290,18 @@ public final class TresorGUI {
 
     public long @NotNull [] getTimestamps() {
         return timestamps.stream().mapToLong(Long::longValue).toArray();
+    }
+
+    /**
+     * Never hold this object for longer then a single draw cycle.
+     * @return the current theme
+     */
+    public @NotNull Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(@NotNull Theme theme) {
+        this.theme = theme;
     }
 
     public int calculateFPS() {
