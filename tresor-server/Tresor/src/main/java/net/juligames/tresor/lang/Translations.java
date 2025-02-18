@@ -140,7 +140,9 @@ public final class Translations {
     }
 
     public static @NotNull String getMessage(@NotNull String key, @NotNull String setId, boolean tiny) {
-        return MESSAGE_SETS.getOrDefault(setId, getDefaultMessageSet()).getOrDefault(key, (tiny ? "?" : "?" + key + "?"));
+        // order: set, default, ? (or ?key?)
+
+        return getMessageSet(setId).getOrDefault(key, getDefaultMessageSet().getOrDefault(key, "?"+key+"?"));
     }
 
     public static @NotNull @Unmodifiable List<String> getAvailableMessageSets() {
@@ -148,7 +150,11 @@ public final class Translations {
     }
 
     public static @NotNull @UnmodifiableView Map<String, String> getMessageSet(@NotNull String setId) {
-        return Collections.unmodifiableMap(MESSAGE_SETS.getOrDefault(setId, Collections.emptyMap()));
+        Map<String, String> messageSet = MESSAGE_SETS.getOrDefault(setId, Collections.emptyMap());
+        Map<String, String> defaultSet = MESSAGE_SETS.getOrDefault(DEFAULT_SET, Collections.emptyMap());
+        Map<String, String> result = new HashMap<>(defaultSet);
+        result.putAll(messageSet);
+        return Collections.unmodifiableMap(result);
     }
 
     public static @NotNull @UnmodifiableView Map<String, String> getDefaultMessageSet() {
