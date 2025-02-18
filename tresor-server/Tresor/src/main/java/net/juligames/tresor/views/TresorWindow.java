@@ -33,8 +33,7 @@ public class TresorWindow extends BasicWindow {
     }
 
     public TresorWindow(@NotNull TresorGUI gui, @NotNull String basicKey, boolean permanent) {
-        this(gui, basicKey, new LinearLayout(Direction.VERTICAL));
-        this.permanent = permanent;
+        this(gui, basicKey, new LinearLayout(Direction.VERTICAL), permanent);
     }
 
     public TresorWindow(@NotNull TresorGUI gui, @NotNull String basicKey, @NotNull LayoutManager layoutManager) {

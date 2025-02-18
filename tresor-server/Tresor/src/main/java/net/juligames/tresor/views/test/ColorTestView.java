@@ -29,14 +29,10 @@ public class ColorTestView {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(ColorTestView.class);
 
-    private static @NotNull HashMap<TresorGUI, Window> colorTestViewMap = new HashMap<>();
 
     public static @NotNull Window getColorTestWindow(@NotNull TresorGUI gui) {
-        if (colorTestViewMap.containsKey(gui)) {
-            return colorTestViewMap.get(gui);
-        }
         TresorWindow window = new TresorWindow(gui, "window.color-test", false);
-        window.setHints(Set.of(Window.Hint.CENTERED));
+        window.setHints(Set.of(Window.Hint.CENTERED, Window.Hint.FIT_TERMINAL_WINDOW));
 
         Panel contentPanel = window.getContentPanel();
         contentPanel.addComponent(new Label(gui.getText("window.color-test.content", false)));
@@ -56,9 +52,6 @@ public class ColorTestView {
             Label errorLabel = new Label("Failed to load image: " + e.getMessage());
             contentPanel.addComponent(errorLabel);
         }
-
-
-        colorTestViewMap.put(gui, window);
         return window;
     }
 
