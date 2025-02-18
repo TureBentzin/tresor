@@ -1,4 +1,7 @@
 {
+  "app": {
+    "title": "{brand} {snapshot?} {dev?}"
+  },
   "window": {
     "dashboard": {
       "title": "TresorGUI",

@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.lang.Translations;
+import net.juligames.tresor.views.test.ColorTestView;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -19,35 +20,39 @@ public class SettingsView {
             return settingsViewMap.get(gui);
         }
         TresorWindow window = new TresorWindow(gui, "window.settings");
+        window.setStrictFocusChange(true);
+        window.getContentPanel().addComponent(new Button(gui.getText("window.settings.colortest.title", false), () -> {
+            gui.getGui().addWindowAndWait(ColorTestView.getColorTestWindow(gui));
+        }));
+        Panel appearancePanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        Container languageSelection = getLanguageSelection(gui);
 
-        //window.getContentPanel().addComponent(getLanguageSelection(gui));
+        appearancePanel.addComponent(0, languageSelection);
 
-        Panel testPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        appearancePanel.addComponent(new Label(gui.getText("window.settings.regenerate.content", false)));
+        appearancePanel.addComponent(getRegenerateButton(gui));
+        // appearancePanel.addComponent(2, new CheckBox("placeholder"));
 
-        testPanel.addComponent(new Button("Test Button 1"));
-        testPanel.addComponent(new Button("Test Button 2"));
+        //window.setFocusedInteractable(languageSelection.getChildren().stream().filter(component -> component instanceof Interactable).map(component -> (Interactable) component).findFirst().orElse(null));
+        // Utils.findFocus(window, languageSelection);
 
-        window.getContentPanel().addComponent(testPanel.withBorder(Borders.singleLineBevel("Test Panel")));
-
-        window.getContentPanel().addComponent(getRegeneratePanel(gui));
+        appearancePanel.setPreferredSize(appearancePanel.calculatePreferredSize());
+        window.getContentPanel().addComponent(appearancePanel.withBorder(Borders.singleLine(gui.getText("window.settings.appearance.title", false))));
 
         settingsViewMap.put(gui, window);
         return window;
     }
 
     //language selection
-    private static @NotNull Component getLanguageSelection(@NotNull TresorGUI gui) {
+    private static @NotNull Container getLanguageSelection(@NotNull TresorGUI gui) {
 
         Panel languagePanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         languagePanel.withBorder(Borders.singleLine(gui.getText("window.settings.language.title", false)));
 
         Label label = new Label(gui.getText("window.settings.language.content", false));
-        label.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER));
-
         languagePanel.addComponent(label);
 
         ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER));
         List<String> languages = Translations.getAvailableMessageSets();
         languages.forEach(comboBox::addItem);
         comboBox.setSelectedItem(gui.getMessageSet());
@@ -59,16 +64,11 @@ public class SettingsView {
             }
         });
 
+
         languagePanel.addComponent(comboBox);
-        return languagePanel.withBorder(Borders.singleLineBevel(gui.getText("window.settings.language.title", false)));
+        return languagePanel.withBorder(Borders.singleLine(gui.getText("window.settings.language.title", false)));
     }
 
-    private static @NotNull Component getRegeneratePanel(@NotNull TresorGUI gui) {
-        Panel panel = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        panel.addComponent(new Label(gui.getText("window.settings.regenerate.content", false)));
-        panel.addComponent(getRegenerateButton(gui));
-        return panel.withBorder(Borders.singleLineBevel());
-    }
 
     private static @NotNull Button getRegenerateButton(@NotNull TresorGUI gui) {
         Button button = new Button(gui.getText("window.settings.regenerate.button", false));
