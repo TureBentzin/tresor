@@ -12,8 +12,7 @@ The primary idea behind Tresor is to use a Command-Line Interface (CLI) over Tel
 
 Tresor is designed to work seamlessly with TSOCK, which is a protocol that enables Telnet communication over HTTP WebSockets. This integration allows the application to function effectively even in modern network environments that primarily support web technologies. TSOCK is not yet released and is expected to become available in late February on my GitHub.
 
-The user interface of Tresor follows a 2000s-style GUI, providing a familiar and straightforward visual experience for users familiar with traditional banking interfaces.
-
+The user interface of Tresor provides a 2000s-style GUI, focusing on easy navigation.
 ## Legacy API
 
 The application was initially designed around the following legacy API:
