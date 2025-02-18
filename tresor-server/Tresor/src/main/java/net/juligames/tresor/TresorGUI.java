@@ -9,6 +9,8 @@ import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.theme.BefatorTheme;
 import net.juligames.tresor.views.DashboardView;
+import net.juligames.tresor.views.SettingsView;
+import net.juligames.tresor.views.common.Common;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -33,6 +35,8 @@ public final class TresorGUI {
     private final @NotNull TelnetTerminal terminal;
     private final @NotNull Screen screen;
     private @Nullable WindowBasedTextGUI gui;
+
+    private boolean requestRegenerate = true;
 
     private @NotNull String messageSet = Translations.DEFAULT_SET;
 
@@ -75,7 +79,19 @@ public final class TresorGUI {
         try (terminal) {
             //gui.setTheme(new BefatorTheme());
             log.info("Starting a TresorGUI for {}", terminal.getRemoteSocketAddress());
-            gui.addWindowAndWait(DashboardView.getDashboardWindow(this));
+            while (hasRequestRegenerate()) {
+                {
+                    //add Windows
+                    gui.addWindow(DashboardView.getDashboardWindow(this));
+                    gui.addWindow(SettingsView.getSettingsWindow(this));
+
+                }
+                requestRegenerate = false;
+                gui.addWindowAndWait(DashboardView.getDashboardWindow(this));
+                screen.clear();
+            }
+
+
 
 
         } catch (SocketException e) {
@@ -116,6 +132,10 @@ public final class TresorGUI {
     }
 
 
+    public @NotNull String getMessageSet() {
+        return messageSet;
+    }
+
     public int calculateFPS() {
         long[] times = getTimestamps();
         int count = times.length;
@@ -133,5 +153,31 @@ public final class TresorGUI {
         }
 
         return (int) ((count - 1) * 1000 / duration);
+    }
+
+    public void setMessageSet(@NotNull String messageSet) {
+        if (Translations.getAvailableMessageSets().contains(messageSet)) {
+            this.messageSet = messageSet;
+        } else {
+            log.warn("Message set {} not available", messageSet);
+        }
+    }
+
+    //remove all cached elements, then create new ones
+    public void regenerate() {
+        Common.remove(this);
+        DashboardView.remove(this);
+        SettingsView.remove(this);
+        requestRegenerate();
+        getGui().getWindows().stream().toList().forEach(Window::close);
+
+    }
+
+    public boolean hasRequestRegenerate() {
+        return requestRegenerate;
+    }
+
+    public void requestRegenerate() {
+        this.requestRegenerate = true;
     }
 }

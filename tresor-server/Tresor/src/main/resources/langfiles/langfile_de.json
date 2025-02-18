@@ -1,0 +1,42 @@
+{
+  "window": {
+    "dashboard": {
+      "title": "TresorGUI",
+      "content": "Willkommen bei TresorGUI"
+    },
+    "login": {
+      "title": "Anmeldung"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "language": {
+        "title": "Sprache"
+      }
+    }
+  },
+  "menu": {
+    "home": {
+      "title": "Startseite",
+      "dashboard": {
+        "title": "Übersicht"
+      }
+    },
+    "about": {
+      "title": "Über",
+      "version": {
+        "title": "Version",
+        "content": "Ausführung von {brand} Version {version}!\n  -> {commit} auf {branch}\nKompiliert am {buildTime} von {buildUser}."
+      }
+    },
+    "system": {
+      "title": "System",
+      "settings": {
+        "title": "Einstellungen"
+      },
+      "quit": {
+        "title": "Beenden",
+        "content": "Möchten Sie wirklich beenden?"
+      }
+    }
+  }
+}

@@ -6,9 +6,26 @@
     },
     "login": {
       "title": "Login"
+    },
+    "settings": {
+      "title": "Settings",
+      "language": {
+        "title": "Language"
+      },
+      "regenerate": {
+        "title": "Regenerate",
+        "content": "Apply changes and regenerate your Telnet view?",
+        "button": "Apply and regenerate"
+      }
     }
   },
   "menu": {
+    "home": {
+      "title": "Home",
+      "dashboard": {
+        "title": "Dashboard"
+      }
+    },
     "about": {
       "title": "About",
       "version": {
@@ -16,10 +33,15 @@
         "content": "Running {brand} version {version}!\n  -> {commit} on {branch}\nCompiled on {buildTime} by {buildUser}."
       }
     },
-    "quit": {
-      "title": "Quit",
-      "entry": "Quit",
-      "content": "Do you really want to quit?"
+    "system": {
+      "title": "System",
+      "settings": {
+        "title": "Settings"
+      },
+      "quit": {
+        "title": "Quit",
+        "content": "Do you really want to quit?"
+      }
     }
   }
 }

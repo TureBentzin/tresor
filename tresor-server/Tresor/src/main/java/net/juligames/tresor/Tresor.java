@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.List;
 import java.util.Set;
 
 
@@ -35,7 +36,7 @@ public class Tresor {
         ServerSocket serverSocket = server.getServerSocket();
         log.info("Server started on {}:{}", serverSocket.getInetAddress(), serverSocket.getLocalPort());
 
-        Set<String> availableMessageSets = Translations.getAvailableMessageSets();
+        List<String> availableMessageSets = Translations.getAvailableMessageSets();
         //TODO provide message sets
 
         while (true) {

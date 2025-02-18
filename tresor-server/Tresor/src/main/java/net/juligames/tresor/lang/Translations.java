@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import net.juligames.tresor.Tresor;
 import net.juligames.tresor.views.common.Common;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,6 @@ public final class Translations {
     }
 
 
-
     private static void loadMessageSet(@NotNull String setId) {
         String fileName = "langfiles/langfile_" + setId + ".json";
         log.info("Attempting to load message set from: {}", fileName);
@@ -91,7 +91,8 @@ public final class Translations {
 
             try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                 Gson gson = new Gson();
-                Map<String, Object> nestedMap = gson.fromJson(reader, new TypeToken<Map<String, Object>>() {}.getType());
+                Map<String, Object> nestedMap = gson.fromJson(reader, new TypeToken<Map<String, Object>>() {
+                }.getType());
 
                 if (nestedMap == null) {
                     log.warn("Empty or invalid JSON in file: {}", fileName);
@@ -142,8 +143,8 @@ public final class Translations {
         return MESSAGE_SETS.getOrDefault(setId, getDefaultMessageSet()).getOrDefault(key, (tiny ? "?" : "?" + key + "?"));
     }
 
-    public static @NotNull Set<String> getAvailableMessageSets() {
-        return MESSAGE_SETS.keySet();
+    public static @NotNull @Unmodifiable List<String> getAvailableMessageSets() {
+        return List.copyOf(MESSAGE_SETS.keySet());
     }
 
     public static @NotNull @UnmodifiableView Map<String, String> getMessageSet(@NotNull String setId) {
