@@ -29,6 +29,8 @@ public class SettingsView {
 
         window.getContentPanel().addComponent(testPanel.withBorder(Borders.singleLineBevel("Test Panel")));
 
+        window.getContentPanel().addComponent(getRegeneratePanel(gui));
+
         settingsViewMap.put(gui, window);
         return window;
     }
