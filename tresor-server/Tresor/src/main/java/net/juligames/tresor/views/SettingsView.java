@@ -18,30 +18,25 @@ public class SettingsView {
         if (settingsViewMap.containsKey(gui)) {
             return settingsViewMap.get(gui);
         }
-        Window window = new TresorWindow(gui, "window.settings");
-        window.setComponent(getSettingsPanel(gui));
+        TresorWindow window = new TresorWindow(gui, "window.settings");
+
+        //window.getContentPanel().addComponent(getLanguageSelection(gui));
+
+        Panel testPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        testPanel.addComponent(new Button("Test Button 1"));
+        testPanel.addComponent(new Button("Test Button 2"));
+
+        window.getContentPanel().addComponent(testPanel.withBorder(Borders.singleLineBevel("Test Panel")));
+
         settingsViewMap.put(gui, window);
         return window;
-    }
-
-    private static @NotNull Component getSettingsPanel(@NotNull TresorGUI gui) {
-        Panel panel = new Panel(new GridLayout(2));
-        GridLayout gridLayout = (GridLayout) panel.getLayoutManager();
-        gridLayout.setRightMarginSize(1);
-        gridLayout.setTopMarginSize(1);
-
-        panel.addComponent(getLanguageSelection(gui));
-        panel.addComponent(getRegeneratePanel(gui));
-
-        //TODO: user gets trapped in settings view?
-
-        return panel.withBorder(Borders.singleLineBevel());
     }
 
     //language selection
     private static @NotNull Component getLanguageSelection(@NotNull TresorGUI gui) {
 
-        Panel languagePanel = new Panel(new GridLayout(2));
+        Panel languagePanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         languagePanel.withBorder(Borders.singleLine(gui.getText("window.settings.language.title", false)));
 
         Label label = new Label(gui.getText("window.settings.language.content", false));
@@ -67,7 +62,7 @@ public class SettingsView {
     }
 
     private static @NotNull Component getRegeneratePanel(@NotNull TresorGUI gui) {
-        Panel panel = new Panel(new GridLayout(2));
+        Panel panel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         panel.addComponent(new Label(gui.getText("window.settings.regenerate.content", false)));
         panel.addComponent(getRegenerateButton(gui));
         return panel.withBorder(Borders.singleLineBevel());
