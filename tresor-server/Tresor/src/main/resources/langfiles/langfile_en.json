@@ -10,7 +10,8 @@
     "settings": {
       "title": "Settings",
       "language": {
-        "title": "Language"
+        "title": "Language",
+        "content": "Select your preferred language:"
       },
       "regenerate": {
         "title": "Regenerate",

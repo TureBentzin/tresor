@@ -1,13 +1,12 @@
 package net.juligames.tresor.views;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.lang.Translations;
-import net.juligames.tresor.views.common.Common;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,28 +19,36 @@ public class SettingsView {
             return settingsViewMap.get(gui);
         }
         Window window = new TresorWindow(gui, "window.settings");
-        window.setMenuBar(Common.getMenu(gui));
-        Panel contentPanel = getSettingsPanel(gui);
-        window.setComponent(contentPanel);
+        window.setComponent(getSettingsPanel(gui));
         settingsViewMap.put(gui, window);
         return window;
     }
 
-    private static @NotNull Panel getSettingsPanel(@NotNull TresorGUI gui) {
+    private static @NotNull Component getSettingsPanel(@NotNull TresorGUI gui) {
         Panel panel = new Panel(new GridLayout(2));
         GridLayout gridLayout = (GridLayout) panel.getLayoutManager();
         gridLayout.setRightMarginSize(1);
         gridLayout.setTopMarginSize(1);
 
-        panel.addComponent(new Label(gui.getText("window.settings.language.title", false)));
         panel.addComponent(getLanguageSelection(gui));
         panel.addComponent(getRegeneratePanel(gui));
 
-        return panel;
+        //TODO: user gets trapped in settings view?
+
+        return panel.withBorder(Borders.singleLineBevel());
     }
 
     //language selection
     private static @NotNull Component getLanguageSelection(@NotNull TresorGUI gui) {
+
+        Panel languagePanel = new Panel(new GridLayout(2));
+        languagePanel.withBorder(Borders.singleLine(gui.getText("window.settings.language.title", false)));
+
+        Label label = new Label(gui.getText("window.settings.language.content", false));
+        label.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER));
+
+        languagePanel.addComponent(label);
+
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER));
         List<String> languages = Translations.getAvailableMessageSets();
@@ -54,14 +61,16 @@ public class SettingsView {
             } catch (IOException ignoredException) {
             }
         });
-        return comboBox;
+
+        languagePanel.addComponent(comboBox);
+        return languagePanel.withBorder(Borders.singleLineBevel(gui.getText("window.settings.language.title", false)));
     }
 
-    private static @NotNull Panel getRegeneratePanel(@NotNull TresorGUI gui) {
+    private static @NotNull Component getRegeneratePanel(@NotNull TresorGUI gui) {
         Panel panel = new Panel(new GridLayout(2));
         panel.addComponent(new Label(gui.getText("window.settings.regenerate.content", false)));
         panel.addComponent(getRegenerateButton(gui));
-        return panel;
+        return panel.withBorder(Borders.singleLineBevel());
     }
 
     private static @NotNull Button getRegenerateButton(@NotNull TresorGUI gui) {

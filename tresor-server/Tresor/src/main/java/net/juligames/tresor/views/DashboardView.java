@@ -25,9 +25,7 @@ public class DashboardView {
             return dashboardViewMap.get(gui);
         }
         Window window = new TresorWindow(gui, "window.dashboard");
-        window.setMenuBar(getMenu(gui));
         Panel contentPanel = new Panel(new GridLayout(2));
-        window.setHints(Set.of(Window.Hint.EXPANDED));
 
         contentPanel.addComponent(new Label(gui.getText("window.dashboard.content", false)));
         window.setComponent(contentPanel);
