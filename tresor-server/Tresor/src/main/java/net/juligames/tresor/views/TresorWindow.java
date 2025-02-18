@@ -13,23 +13,45 @@ import java.util.Set;
 @SuppressWarnings("DeprecatedIsStillUsed")
 public class TresorWindow extends BasicWindow {
 
+    private boolean permanent;
+
     private static @NotNull String generateTitle(@NotNull TresorGUI gui) {
         return gui.getTextWithParams("app.title", false,
                 Map.of("snapshot?", ProjectPropertiesUtil.isSnapshot() ? " (SNAPSHOT)" : "",
-                        "development?", ProjectPropertiesUtil.isDevelopment() ? " (DEV)" : ""));
+                        "dev?", ProjectPropertiesUtil.isDevelopment() ? " (DEV)" : "",
+                        "version", ProjectPropertiesUtil.getGitVersion(),
+                        "build", ProjectPropertiesUtil.getGitCommit(),
+                        "date", ProjectPropertiesUtil.getGitBuildTime(),
+                        "branch", ProjectPropertiesUtil.getGitBranch(),
+                        "brand", ProjectPropertiesUtil.getArtifactId()));
     }
 
     private final @NotNull Panel contentPanel;
 
     public TresorWindow(@NotNull TresorGUI gui, @NotNull String basicKey) {
+        this(gui, basicKey, true);
+    }
+
+    public TresorWindow(@NotNull TresorGUI gui, @NotNull String basicKey, boolean permanent) {
         this(gui, basicKey, new LinearLayout(Direction.VERTICAL));
+        this.permanent = permanent;
     }
 
     public TresorWindow(@NotNull TresorGUI gui, @NotNull String basicKey, @NotNull LayoutManager layoutManager) {
+        this(gui, basicKey, layoutManager, true);
+    }
+
+    public TresorWindow(@NotNull TresorGUI gui, @NotNull String basicKey, @NotNull LayoutManager layoutManager, boolean permanent) {
         super(generateTitle(gui));
-        this.setHints(Set.of(Hint.EXPANDED));
-        this.setMenuBar(Common.getMenu(gui));
         contentPanel = new Panel(layoutManager);
+        if (permanent) {
+            this.setHints(Set.of(Hint.EXPANDED));
+            this.setMenuBar(Common.getMenu(gui));
+        } else {
+            this.setHints(Set.of(Hint.CENTERED));
+            contentPanel.addComponent(new Button(gui.getText("window.common.close", false), this::close));
+        }
+
         setComponent(contentPanel.withBorder(Borders.singleLineBevel(gui.getText(basicKey + ".title", false))));
     }
 
@@ -55,5 +77,9 @@ public class TresorWindow extends BasicWindow {
 
     public @NotNull Panel getContentPanel() {
         return contentPanel;
+    }
+
+    public boolean isPermanent() {
+        return permanent;
     }
 }

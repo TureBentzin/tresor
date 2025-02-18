@@ -3,6 +3,9 @@
     "title": "{brand} {snapshot?} {dev?}"
   },
   "window": {
+    "common": {
+      "close": "Close"
+    },
     "dashboard": {
       "title": "TresorGUI",
       "content": "Welcome to TresorGUI"
@@ -20,7 +23,14 @@
         "title": "Regenerate",
         "content": "Apply changes and regenerate your Telnet view?",
         "button": "Apply and regenerate"
+      },
+      "appearance": {
+        "title": "Appearance"
       }
+    },
+    "color-test": {
+      "title": "Color Test",
+      "content": "This test shows you the available color space:"
     }
   },
   "menu": {

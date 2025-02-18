@@ -21,7 +21,7 @@ public class SettingsView {
         }
         TresorWindow window = new TresorWindow(gui, "window.settings");
         window.setStrictFocusChange(true);
-        window.getContentPanel().addComponent(new Button(gui.getText("window.settings.colortest.title", false), () -> {
+        window.getContentPanel().addComponent(new Button(gui.getText("window.color-test.title", false), () -> {
             gui.getGui().addWindowAndWait(ColorTestView.getColorTestWindow(gui));
         }));
         Panel appearancePanel = new Panel(new LinearLayout(Direction.VERTICAL));
