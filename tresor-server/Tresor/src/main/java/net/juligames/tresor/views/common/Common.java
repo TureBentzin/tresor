@@ -1,13 +1,7 @@
 package net.juligames.tresor.views.common;
 
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
-import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
-import com.googlecode.lanterna.gui2.menu.MenuItem;
 import net.juligames.tresor.TresorGUI;
-import net.juligames.tresor.views.DashboardView;
-import net.juligames.tresor.views.SettingsView;
 import net.juligames.tresor.views.common.menu.AboutMenu;
 import net.juligames.tresor.views.common.menu.HomeMenu;
 import net.juligames.tresor.views.common.menu.SettingsMenu;

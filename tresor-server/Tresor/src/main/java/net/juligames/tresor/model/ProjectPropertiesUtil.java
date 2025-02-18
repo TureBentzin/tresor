@@ -42,6 +42,24 @@ public class ProjectPropertiesUtil {
         return properties.getProperty("project.git.build.time", "unknown");
     }
 
+    public static @NotNull String getPrettyBuildTime() {
+        String raw = getGitBuildTime();
+        return raw.substring(0, 10) + " " + raw.substring(11, 19);
+    }
+
+    public static boolean isSnapshot() {
+        return getGitVersion().contains("SNAPSHOT");
+    }
+
+    public static boolean isRelease() {
+        return !isSnapshot();
+    }
+
+    //check if dirty
+    public static boolean isDevelopment() {
+        return properties.getProperty("project.git.dirty", "false").equals("true");
+    }
+
     public static @NotNull String getGitBuildUserEmail() {
         return properties.getProperty("project.git.build.user.email", "unknown");
     }
@@ -50,14 +68,4 @@ public class ProjectPropertiesUtil {
         return properties.getProperty("project.git.build.user.name", "unknown");
     }
 
-    // Optional: Print all properties
-    public static void printAllProperties() {
-        System.out.println("Artifact ID: " + getArtifactId());
-        System.out.println("Git Commit: " + getGitCommit());
-        System.out.println("Git Version: " + getGitVersion());
-        System.out.println("Git Branch: " + getGitBranch());
-        System.out.println("Git Build Time: " + getGitBuildTime());
-        System.out.println("Git Build User Email: " + getGitBuildUserEmail());
-        System.out.println("Git Build User Name: " + getGitBuildUserName());
-    }
 }

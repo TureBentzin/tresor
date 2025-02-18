@@ -20,8 +20,8 @@ public class AboutMenu {
     public static @NotNull MenuItem getVersionItem(@NotNull TresorGUI tresorGUI) {
         String brand = ProjectPropertiesUtil.getArtifactId();
         String version = ProjectPropertiesUtil.getGitVersion();
-        String commit = ProjectPropertiesUtil.getGitCommit();
-        String buildTime = ProjectPropertiesUtil.getGitBuildTime();
+        String commit = ProjectPropertiesUtil.getGitCommit() + (ProjectPropertiesUtil.isDevelopment() ? " (dev)" : "");
+        String buildTime = ProjectPropertiesUtil.getPrettyBuildTime();
         String buildUser = ProjectPropertiesUtil.getGitBuildUserName();
         String branch = ProjectPropertiesUtil.getGitBranch();
 
