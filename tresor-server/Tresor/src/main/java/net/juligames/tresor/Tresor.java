@@ -1,13 +1,6 @@
 package net.juligames.tresor;
 
 
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.SimpleTheme;
-import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import net.juligames.tresor.lang.Translations;
@@ -15,11 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -29,6 +20,7 @@ import java.util.Set;
 public class Tresor {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(Tresor.class);
+
 
     public static void main(@NotNull String @NotNull [] args) throws IOException {
 
