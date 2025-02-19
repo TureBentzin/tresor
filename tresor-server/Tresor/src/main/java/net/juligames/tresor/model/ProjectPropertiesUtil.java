@@ -44,7 +44,9 @@ public class ProjectPropertiesUtil {
 
     public static @NotNull String getPrettyBuildTime() {
         String raw = getGitBuildTime();
-        return raw.substring(0, 10) + " " + raw.substring(11, 19);
+        if (raw.length() >= 19)
+            return raw.substring(0, 10) + " " + raw.substring(11, 19);
+        else return raw;
     }
 
     public static boolean isSnapshot() {
