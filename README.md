@@ -101,3 +101,15 @@ To build and run the current version of the Tresor Server, follow these steps:
 7. **Exit the GUI**:
    Navigate to "Settings" -> "Quit" -> "Yes" to close the application safely.
 
+
+## Using the Nix Flake
+This repo provides a nix flake (flake.nix), but because of the way the project is structured, it is not possible to
+build the project using the flake right now.
+Im actively working on a solution to this problem, but for now, you have to use the manual build instructions above.
+Alternatively, you can use the nix-shell command to get a shell with all the required dependencies.
+```bash
+nix-shell -p jdk23 maven git
+```
+If you are familiar with nix, i would appreciate any help with this issue.
+Feel free to open a pull request if you have a solution.
+For this reason i will keep the `.nix` files in the repository for now.
