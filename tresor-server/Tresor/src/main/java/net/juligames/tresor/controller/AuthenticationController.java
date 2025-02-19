@@ -4,6 +4,7 @@ package net.juligames.tresor.controller;
 import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.ConfigModel;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,6 +64,7 @@ public class AuthenticationController {
 
         this.username = username;
         //TODO
+        this.jwt = "jwt";
         return AuthenticationResult.SUCCESS;
     }
 
@@ -74,6 +76,16 @@ public class AuthenticationController {
      */
     public @NotNull Optional<String> getUsername() {
         return Optional.ofNullable(username);
+    }
+
+    @ApiStatus.Internal
+    public void logout() {
+        username = null;
+        jwt = null;
+    }
+
+    public boolean isAuthenticated() {
+        return username != null && jwt != null;
     }
 
 }

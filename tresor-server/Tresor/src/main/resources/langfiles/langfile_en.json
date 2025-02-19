@@ -9,7 +9,10 @@
     },
     "dashboard": {
       "title": "TresorGUI",
-      "content": "Welcome to TresorGUI"
+      "content": "Welcome to TresorGUI",
+      "not_authed": "You are not authenticated! Please login first.",
+      "authed": "You are authenticated as {username}.",
+      "login": "Login"
     },
     "login": {
       "title": "Login",
@@ -24,6 +27,11 @@
       "language": {
         "title": "Language",
         "content": "Select your preferred language:"
+      },
+      "debug": {
+        "title": "Debug",
+        "content": "This information is only for debugging purposes:",
+        "windows": "Currently known windows (current window might be excluded):"
       },
       "regenerate": {
         "title": "Regenerate",

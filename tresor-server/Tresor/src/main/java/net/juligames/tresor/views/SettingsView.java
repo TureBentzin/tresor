@@ -2,6 +2,7 @@ package net.juligames.tresor.views;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.table.Table;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.views.test.ColorTestView;
@@ -39,8 +40,29 @@ public class SettingsView {
         appearancePanel.setPreferredSize(appearancePanel.calculatePreferredSize());
         window.getContentPanel().addComponent(appearancePanel.withBorder(Borders.singleLine(gui.getText("window.settings.appearance.title", false))));
 
+        window.getContentPanel().addComponent(getDebugInformation(gui));
+
         settingsViewMap.put(gui, window);
         return window;
+    }
+
+    private static @NotNull Container getDebugInformation(@NotNull TresorGUI gui) {
+        Panel debugPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        debugPanel.addComponent(new Label(gui.getText("window.settings.debug.content", false)));
+        debugPanel.addComponent(new Label("JWT Fingerprint: " + gui.getAuthenticationController().getJwtFingerprint()));
+
+        debugPanel.addComponent(gui.getTextAsLabel("window.settings.debug.windows", false));
+        Table<String> table = new Table<>("Position", "Window");
+        for (Window window : gui.getGui().getWindows()) {
+            String windowName = window.getTitle();
+            if (window instanceof TresorWindow) {
+                windowName += "(" + ((TresorWindow) window).getContentName() + ")";
+            }
+            table.getTableModel().addRow(window.getPosition().toString(), windowName);
+        }
+        debugPanel.addComponent(table);
+
+        return debugPanel.withBorder(Borders.singleLine(gui.getText("window.settings.debug.title", false)));
     }
 
     //language selection

@@ -15,6 +15,7 @@ import java.util.Set;
 public class TresorWindow extends BasicWindow {
 
     private boolean permanent;
+    private final @NotNull String contentName;
 
     private static @NotNull String generateTitle(@NotNull TresorGUI gui) {
         return gui.getTextWithParams("app.title", false,
@@ -56,7 +57,8 @@ public class TresorWindow extends BasicWindow {
             contentPanel.addComponent(component);
         }
 
-        setComponent(contentPanel.withBorder(Borders.singleLineBevel(gui.getText(basicKey + ".title", false))));
+        contentName = gui.getText(basicKey + ".title", false);
+        setComponent(contentPanel.withBorder(Borders.singleLineBevel(contentName)));
     }
 
     @Override
@@ -85,5 +87,10 @@ public class TresorWindow extends BasicWindow {
 
     public boolean isPermanent() {
         return permanent;
+    }
+
+
+    public @NotNull String getContentName() {
+        return contentName;
     }
 }

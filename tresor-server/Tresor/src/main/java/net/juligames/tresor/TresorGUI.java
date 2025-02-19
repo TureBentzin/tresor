@@ -14,6 +14,7 @@ import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.views.DashboardView;
 import net.juligames.tresor.views.SettingsView;
 import net.juligames.tresor.views.common.Common;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -194,6 +195,7 @@ public final class TresorGUI {
         return requestRegenerate;
     }
 
+    @ApiStatus.Internal
     public void requestRegenerate() {
         this.requestRegenerate = true;
     }

@@ -70,7 +70,8 @@ public class LoginView {
                 result = gui.getAuthenticationController().authenticate(serverTextBox.getText(), usernameTextBox.getText(), passwordTextBox.getText());
             } while (switch (result) {
                 case SUCCESS:
-                    gui.getGui().setActiveWindow(DashboardView.getDashboardWindow(gui));
+                    gui.getGui().removeWindow(gui.getGui().getActiveWindow());
+                    gui.regenerate();
                     yield false;
                 case USER_NOT_FOUND:
                     yield gui.showError("auth.user_not_found");
@@ -82,6 +83,8 @@ public class LoginView {
                     yield gui.showError("auth.api_error", true);
             } && maxTries-- > 0);
         });
+
+
 
         panel.addComponent(new EmptySpace(inputSize));
         panel.addComponent(loginButton);
