@@ -101,15 +101,37 @@ To build and run the current version of the Tresor Server, follow these steps:
 7. **Exit the GUI**:
    Navigate to "Settings" -> "Quit" -> "Yes" to close the application safely.
 
-
 ## Using the Nix Flake
+
 This repo provides a nix flake (flake.nix), but because of the way the project is structured, it is not possible to
 build the project using the flake right now.
 Im actively working on a solution to this problem, but for now, you have to use the manual build instructions above.
 Alternatively, you can use the nix-shell command to get a shell with all the required dependencies.
+
 ```bash
 nix-shell -p jdk23 maven git
 ```
-If you are familiar with nix, i would appreciate any help with this issue.
+
+If you are familiar with nix, I would appreciate any help with this issue.
 Feel free to open a pull request if you have a solution.
 For this reason i will keep the `.nix` files in the repository for now.
+
+## IntellJ IDEA
+
+The project is developed with IntelliJ IDEA, but the `.idea` folder is not included in the repository.
+I provide a run configuration for the server in the `.run` folder.
+You can import this configuration into your IntelliJ IDEA to build and run the server from the IDE.
+
+## Translations
+
+Tresor uses "langfiles" in the `tresor-server/Tresor/src/main/resources/langfiles` directory to provide translations.
+The files are in the format `langfile_<language id>.json`.
+The default language is English (en), and the application will fall back to English if a translation is missing.
+
+### Translating Tresor
+
+Tresor is heavily work in progress, and the translations (with their keys, params, etc.) are subject to change.
+For testing purposes, I have included a German translation file (`langfile_de.json`).
+I may update the german translation file as I develop the application further, but i cant guarantee that it will always
+be up to date. 
+
