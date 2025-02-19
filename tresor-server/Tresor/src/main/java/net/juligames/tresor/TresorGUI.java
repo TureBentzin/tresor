@@ -9,6 +9,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import net.juligames.tresor.controller.AuthenticationController;
+import net.juligames.tresor.controller.BankingController;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.views.DashboardView;
 import net.juligames.tresor.views.SettingsView;
@@ -47,11 +48,13 @@ public final class TresorGUI {
     private static final @NotNull ThreadGroup threadGroup = new ThreadGroup("TresorGUI");
 
     private final @NotNull AuthenticationController authenticationController;
+    private final @NotNull BankingController bankingController;
 
     public TresorGUI(@NotNull TelnetTerminal terminal) throws IOException {
         this.terminal = terminal;
         this.screen = new TerminalScreen(terminal);
         authenticationController = new AuthenticationController(this);
+        bankingController = new BankingController(this);
         //execute handle asynchronously
         Thread thread = new Thread(threadGroup, () -> {
             try {
@@ -233,5 +236,9 @@ public final class TresorGUI {
             default:
                 throw new IllegalStateException("Unexpected value: " + messageDialogButton);
         };
+    }
+
+    public @NotNull BankingController getBankingController() {
+        return bankingController;
     }
 }

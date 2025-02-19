@@ -5,6 +5,10 @@ import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.ConfigModel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Ture Bentzin
@@ -15,8 +19,19 @@ public class AuthenticationController {
 
     private final @NotNull TresorGUI gui;
 
+    private @Nullable String username = null;
+    private @Nullable String jwt = null;
+
     public AuthenticationController(@NotNull TresorGUI gui) {
         this.gui = gui;
+    }
+
+    public int getJwtFingerprint() {
+        return Objects.hash(jwt);
+    }
+
+    protected @NotNull Optional<String> getJwt() {
+        return Optional.ofNullable(jwt);
     }
 
     public enum AuthenticationResult {
@@ -46,8 +61,19 @@ public class AuthenticationController {
             return AuthenticationResult.FAILURE;
         }
 
+        this.username = username;
         //TODO
         return AuthenticationResult.SUCCESS;
+    }
+
+
+    /**
+     * FOR DISPLAY PURPOSES ONLY
+     *
+     * @return stored username
+     */
+    public @NotNull Optional<String> getUsername() {
+        return Optional.ofNullable(username);
     }
 
 }

@@ -50,6 +50,7 @@ public class TresorWindow extends BasicWindow {
         } else {
             this.setHints(Set.of(Hint.CENTERED));
             Button component = new Button(gui.getText("window.common.close", false), this::close);
+            component.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
             String label = component.getLabel();
             component.setPreferredSize(new TerminalSize(label.length() + 2, 1));
             contentPanel.addComponent(component);
