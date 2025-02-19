@@ -43,6 +43,5 @@
 
     # warning: flake output attribute 'defaultPackage' is deprecated; use 'packages.<system>.default' instead
     defaultPackage.${system} = self.packages.${system}.tresor-server;
-    # self.packages.${system}.default = self.packages.${system}.tresor-server;
   };
 }
