@@ -1,13 +1,11 @@
 package net.juligames.tresor;
 
 
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import net.juligames.tresor.lang.Translations;
-import net.juligames.tresor.theme.BefatorTheme;
 import net.juligames.tresor.views.DashboardView;
 import net.juligames.tresor.views.SettingsView;
 import net.juligames.tresor.views.common.Common;
@@ -18,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -74,6 +70,7 @@ public final class TresorGUI {
     }
 
     private void handle() throws IOException {
+        terminal.maximize();
         gui = new MultiWindowTextGUI(screen);
         screen.startScreen();
         try (terminal) {
@@ -92,8 +89,10 @@ public final class TresorGUI {
             }
 
 
-
-
+            String goodbye = getText("app.goodbye", false);
+            int centerColumn = (screen.getTerminalSize().getColumns() - goodbye.length()) / 2;
+            screen.newTextGraphics().putString(centerColumn, terminal.getTerminalSize().getRows() / 2, goodbye);
+            screen.refresh();
         } catch (SocketException e) {
             log.info("Connection closed!");
         } catch (Exception e) {

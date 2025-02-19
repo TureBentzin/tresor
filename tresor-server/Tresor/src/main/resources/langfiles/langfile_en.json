@@ -1,6 +1,7 @@
 {
   "app": {
-    "title": "{brand} {snapshot?} {dev?}"
+    "title": "{brand} {snapshot?} {dev?}",
+    "goodbye": "Goodbye!"
   },
   "window": {
     "common": {
