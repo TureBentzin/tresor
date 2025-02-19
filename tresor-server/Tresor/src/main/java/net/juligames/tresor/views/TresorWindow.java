@@ -1,5 +1,6 @@
 package net.juligames.tresor.views;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.ProjectPropertiesUtil;
@@ -48,7 +49,10 @@ public class TresorWindow extends BasicWindow {
             this.setMenuBar(Common.getMenu(gui));
         } else {
             this.setHints(Set.of(Hint.CENTERED));
-            contentPanel.addComponent(new Button(gui.getText("window.common.close", false), this::close));
+            Button component = new Button(gui.getText("window.common.close", false), this::close);
+            String label = component.getLabel();
+            component.setPreferredSize(new TerminalSize(label.length() + 2, 1));
+            contentPanel.addComponent(component);
         }
 
         setComponent(contentPanel.withBorder(Borders.singleLineBevel(gui.getText(basicKey + ".title", false))));

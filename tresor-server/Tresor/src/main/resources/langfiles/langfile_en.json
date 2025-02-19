@@ -12,7 +12,12 @@
       "content": "Welcome to TresorGUI"
     },
     "login": {
-      "title": "Login"
+      "title": "Login",
+      "content": "Please enter your credentials:",
+      "server": "Server: ",
+      "username": "Username: ",
+      "password": "Password: ",
+        "button": "Login"
     },
     "settings": {
       "title": "Settings",
@@ -39,6 +44,9 @@
       "title": "Home",
       "dashboard": {
         "title": "Dashboard"
+      },
+      "login": {
+        "title": "Login"
       }
     },
     "about": {

@@ -122,12 +122,20 @@ public final class TresorGUI {
         return Translations.getMessage(key, messageSet, tiny);
     }
 
+    public @NotNull Label getTextAsLabel(@NotNull String key, boolean tiny) {
+        return new Label(getText(key, tiny));
+    }
+
     public @NotNull String getTextWithParams(@NotNull String key, boolean tiny, @NotNull Map<String, String> params) {
         String message = getText(key, tiny);
         for (Map.Entry<String, String> entry : params.entrySet()) {
             message = message.replace("{" + entry.getKey() + "}", entry.getValue());
         }
         return message;
+    }
+
+    public @NotNull Label getTextWithParamsAsLabel(@NotNull String key, boolean tiny, @NotNull Map<String, String> params) {
+        return new Label(getTextWithParams(key, tiny, params));
     }
 
 

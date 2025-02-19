@@ -4,13 +4,17 @@ package net.juligames.tresor;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import net.juligames.tresor.lang.Translations;
+import net.juligames.tresor.model.ConfigModel;
+import net.juligames.tresor.model.DevConfig;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -21,8 +25,16 @@ public class Tresor {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(Tresor.class);
 
+    private static @Nullable ConfigModel config;
+
+    public static @NotNull ConfigModel getConfig() {
+        return Objects.requireNonNull(config, "Config not set");
+    }
 
     public static void main(@NotNull String @NotNull [] args) throws IOException {
+
+        //setup
+        config = DevConfig.getInstance();
 
         TelnetTerminalServer server = new TelnetTerminalServer(23);
         ServerSocket serverSocket = server.getServerSocket();
