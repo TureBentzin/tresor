@@ -5,6 +5,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
+import net.juligames.tresor.controller.AuthenticationController;
 import net.juligames.tresor.model.ConfigModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,22 +58,29 @@ public class LoginView {
         panel.addComponent(passwordTextBox);
         passwordTextBox.setMask('*');
 
-        Button loginButton = new Button(gui.getText("window.login.login", false), () -> {
+        Button loginButton = new Button(gui.getText("window.login.button", false), () -> {
             log.info("Login button pressed: Server: {}, Username: {}, Password: {}",
                     serverTextBox.getText(),
                     usernameTextBox.getText(),
                     passwordTextBox.getText()
             );
-            String server = serverTextBox.getText();
-            ConfigModel config = Tresor.getConfig();
-            if (config.getServerWhitelistRegex().stream().anyMatch(server::matches) &&
-                    config.getServerBlacklistRegex().stream().noneMatch(server::matches)) {
-                log.info("Server {} is allowed", server);
-            } else {
-                log.warn("Server {} is not allowed", server);
-            }
-
-
+            AuthenticationController.AuthenticationResult result;
+            int maxTries = 7; // just avoid spamming the server
+            do {
+                result = gui.getAuthenticationController().authenticate(serverTextBox.getText(), usernameTextBox.getText(), passwordTextBox.getText());
+            } while (switch (result) {
+                case SUCCESS:
+                    gui.getGui().setActiveWindow(DashboardView.getDashboardWindow(gui));
+                    yield false;
+                case USER_NOT_FOUND:
+                    yield gui.showError("auth.user_not_found");
+                case FAILURE:
+                    yield gui.showError("auth.failure");
+                case NOT_ALLOWED:
+                    yield gui.showError("auth.not_allowed");
+                case API_ERROR:
+                    yield gui.showError("auth.api_error", true);
+            } && maxTries-- > 0);
         });
 
         panel.addComponent(new EmptySpace(inputSize));

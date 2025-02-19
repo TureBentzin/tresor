@@ -17,7 +17,7 @@
       "server": "Server: ",
       "username": "Username: ",
       "password": "Password: ",
-        "button": "Login"
+      "button": "Login"
     },
     "settings": {
       "title": "Settings",
@@ -37,6 +37,15 @@
     "color-test": {
       "title": "Color Test",
       "content": "This test shows you the available color space:"
+    },
+    "error": {
+      "title": "Error",
+      "auth": {
+        "user_not_found": "User not found!",
+        "failure": "Authentication failed! Please check your credentials.",
+        "not_allowed": "Authentication was denied by tresor",
+        "api_error": "An error occurred while trying to authenticate! You can attempt to try again."
+      }
     }
   },
   "menu": {

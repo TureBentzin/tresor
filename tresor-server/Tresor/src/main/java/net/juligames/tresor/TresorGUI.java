@@ -2,9 +2,13 @@ package net.juligames.tresor;
 
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
+import net.juligames.tresor.controller.AuthenticationController;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.views.DashboardView;
 import net.juligames.tresor.views.SettingsView;
@@ -18,6 +22,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -41,10 +46,12 @@ public final class TresorGUI {
 
     private static final @NotNull ThreadGroup threadGroup = new ThreadGroup("TresorGUI");
 
+    private final @NotNull AuthenticationController authenticationController;
+
     public TresorGUI(@NotNull TelnetTerminal terminal) throws IOException {
         this.terminal = terminal;
         this.screen = new TerminalScreen(terminal);
-
+        authenticationController = new AuthenticationController(this);
         //execute handle asynchronously
         Thread thread = new Thread(threadGroup, () -> {
             try {
@@ -186,5 +193,45 @@ public final class TresorGUI {
 
     public void requestRegenerate() {
         this.requestRegenerate = true;
+    }
+
+    public @NotNull AuthenticationController getAuthenticationController() {
+        return authenticationController;
+    }
+
+    public boolean showError(@NotNull String errorKey) {
+        return showError(errorKey, Map.of());
+    }
+
+    public boolean showError(@NotNull String errorKey, @NotNull Map<String, String> params) {
+        return showError(errorKey, params, false);
+    }
+
+    public boolean showError(@NotNull String errorKey, boolean allowRetry) {
+        return showError(errorKey, Map.of(), allowRetry);
+    }
+
+    public boolean showError(@NotNull String errorKey, @NotNull Map<String, String> params, boolean allowRetry) {
+        final String title = getText("window.error.title", false);
+        final String message = getTextWithParams("window.error." + errorKey, false, params);
+
+        MessageDialogBuilder messageDialogBuilder = new MessageDialogBuilder().setTitle(title)
+                .setText(message)
+                .addButton(MessageDialogButton.Abort);
+        if (allowRetry) {
+            messageDialogBuilder.addButton(MessageDialogButton.Retry);
+        }
+
+        MessageDialog messageDialog = messageDialogBuilder.build();
+        MessageDialogButton messageDialogButton = messageDialog.showDialog(getGui());
+
+        return switch (messageDialogButton) {
+            case Abort:
+                yield false;
+            case Retry:
+                yield true;
+            default:
+                throw new IllegalStateException("Unexpected value: " + messageDialogButton);
+        };
     }
 }
