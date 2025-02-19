@@ -8,9 +8,10 @@
   outputs = { self, nixpkgs }:
   let
     system = "x86_64-linux";
-    pkgs = nixpkgs.${system};
-  in {
-    pkgs.tresor-server = pkgs.stdenv.mkDerivation {
+    pkgs = import nixpkgs { inherit system; };
+  in
+  {
+    packages.${system}.tresor-server = pkgs.stdenv.mkDerivation {
       pname = "tresor-server";
       version = "1.0-SNAPSHOT";
 
@@ -40,8 +41,8 @@
       };
     };
 
-    #warning: flake output attribute 'defaultPackage' is deprecated; use 'packages.<system>.default' instead
-    packages.${system}.tresor-server = pkgs.tresor-server;
-     # defaultPackage.${system} = self.packages.${system}.tresor-server;
+    # warning: flake output attribute 'defaultPackage' is deprecated; use 'packages.<system>.default' instead
+    defaultPackage.${system} = self.packages.${system}.tresor-server;
+    # self.packages.${system}.default = self.packages.${system}.tresor-server;
   };
 }
