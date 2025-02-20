@@ -14,6 +14,10 @@ public final class SecureRunnableRunner<E extends Exception> implements Runnable
     @NotNull
     private final Class<E> exceptionClass;
 
+    public static @NotNull SecureRunnableRunner<Exception> of(@NotNull Runnable<Exception> job) {
+        return new SecureRunnableRunner<>(job, Exception.class);
+    }
+
     public SecureRunnableRunner(@NotNull Runnable<E> runnable, @NotNull Class<E> exceptionClass) {
         this(runnable, exceptionClass, null);
     }

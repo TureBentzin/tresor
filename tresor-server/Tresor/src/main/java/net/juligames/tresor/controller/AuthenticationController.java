@@ -5,6 +5,7 @@ import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.ConfigModel;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +44,7 @@ public class AuthenticationController {
         API_ERROR
     }
 
+    @Blocking
     public @NotNull AuthenticationResult authenticate(@NotNull String host, @NotNull String username, @NotNull String password) {
         final ConfigModel config = Tresor.getConfig();
 

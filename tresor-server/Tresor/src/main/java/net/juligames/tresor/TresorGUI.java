@@ -11,8 +11,10 @@ import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import net.juligames.tresor.controller.AuthenticationController;
 import net.juligames.tresor.controller.BankingController;
 import net.juligames.tresor.lang.Translations;
+import net.juligames.tresor.utils.SecureRunnableRunner;
 import net.juligames.tresor.views.DashboardView;
 import net.juligames.tresor.views.SettingsView;
+import net.juligames.tresor.views.TresorWindow;
 import net.juligames.tresor.views.common.Common;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -35,14 +35,18 @@ public final class TresorGUI {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(TresorGUI.class);
 
+    private static final SeparateTextGUIThread.@NotNull Factory GUI_THREAD_FACTORY = new SeparateTextGUIThread.Factory();
+
     private final @NotNull TelnetTerminal terminal;
     private final @NotNull Screen screen;
     private @Nullable WindowBasedTextGUI gui;
-
     private boolean requestRegenerate = true;
-
     private @NotNull String messageSet = Translations.DEFAULT_SET;
 
+    /**
+     * Static windows are NOT CLOSED when switching with {@link #switchWindow(Window)}
+     */
+    private @NotNull Set<Window> staticWindows = new HashSet<>();
 
     private final @NotNull ArrayBlockingQueue<Long> timestamps = new ArrayBlockingQueue<>(64);
 
@@ -56,16 +60,8 @@ public final class TresorGUI {
         this.screen = new TerminalScreen(terminal);
         authenticationController = new AuthenticationController(this);
         bankingController = new BankingController(this);
-        //execute handle asynchronously
-        Thread thread = new Thread(threadGroup, () -> {
-            try {
-                handle();
-            } catch (IOException e) {
-                log.error("Error handling TelnetTerminal", e);
-            }
-        });
+        GUI_THREAD_FACTORY.createTextGUIThread(gui).invokeLater(SecureRunnableRunner.of(this::handle));
 
-        thread.start();
 
     }
 
@@ -81,29 +77,26 @@ public final class TresorGUI {
     }
 
     private void handle() throws IOException {
-        terminal.maximize();
         gui = new MultiWindowTextGUI(screen);
+        terminal.maximize();
+        gui.addListener((textGUI, keyStroke) -> {
+            log.debug("unhandled key event: {}", keyStroke);
+            return false;
+        });
         screen.startScreen();
         try (terminal) {
-            //gui.setTheme(new BefatorTheme());
             log.info("Starting a TresorGUI for {}", terminal.getRemoteSocketAddress());
-            while (hasRequestRegenerate()) {
-                {
-                    //add Windows
-                    gui.addWindow(DashboardView.getDashboardWindow(this));
-                    gui.addWindow(SettingsView.getSettingsWindow(this));
 
-                }
+            // a regenerate refreshes the whole GUI
+            while (hasRequestRegenerate()) {
                 requestRegenerate = false;
-                gui.addWindowAndWait(DashboardView.getDashboardWindow(this));
+                List<Window> windows = List.copyOf(gui.getWindows());
+                windows.forEach(Window::close);
+                windows.forEach(gui::removeWindow);
                 screen.clear();
+                gui.addWindow(DashboardView.getDashboardWindow(this));
             }
 
-
-            String goodbye = getText("app.goodbye", false);
-            int centerColumn = (screen.getTerminalSize().getColumns() - goodbye.length()) / 2;
-            screen.newTextGraphics().putString(centerColumn, terminal.getTerminalSize().getRows() / 2, goodbye);
-            screen.refresh();
         } catch (SocketException e) {
             log.info("Connection closed!");
         } catch (Exception e) {
@@ -242,5 +235,15 @@ public final class TresorGUI {
 
     public @NotNull BankingController getBankingController() {
         return bankingController;
+    }
+
+    public void switchWindow(@NotNull Window window) {
+        MultiWindowTextGUI gui = (MultiWindowTextGUI) getGui();
+        Window old = gui.getActiveWindow();
+        if (old != null && !staticWindows.contains(old)) {
+            old.close();
+        }
+        gui.removeWindow(old);
+        gui.addWindow(window);
     }
 }
