@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public class DefaultWindow extends TresorWindow {
 
-    public DefaultWindow(@NotNull TresorGUI gui, @NotNull String basicKey) {
-        super(gui, basicKey);
+    public DefaultWindow(@NotNull TresorGUI gui) {
+        super(gui, "window.default");
     }
 }

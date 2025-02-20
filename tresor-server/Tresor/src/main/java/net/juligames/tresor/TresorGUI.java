@@ -13,10 +13,12 @@ import net.juligames.tresor.controller.BankingController;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.utils.SecureRunnableRunner;
 import net.juligames.tresor.views.DashboardView;
+import net.juligames.tresor.views.DefaultWindow;
 import net.juligames.tresor.views.SettingsView;
 import net.juligames.tresor.views.TresorWindow;
 import net.juligames.tresor.views.common.Common;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Async;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -35,7 +37,6 @@ public final class TresorGUI {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(TresorGUI.class);
 
-    private static final SeparateTextGUIThread.@NotNull Factory GUI_THREAD_FACTORY = new SeparateTextGUIThread.Factory();
 
     private final @NotNull TelnetTerminal terminal;
     private final @NotNull Screen screen;
@@ -50,8 +51,6 @@ public final class TresorGUI {
 
     private final @NotNull ArrayBlockingQueue<Long> timestamps = new ArrayBlockingQueue<>(64);
 
-    private static final @NotNull ThreadGroup threadGroup = new ThreadGroup("TresorGUI");
-
     private final @NotNull AuthenticationController authenticationController;
     private final @NotNull BankingController bankingController;
 
@@ -60,13 +59,10 @@ public final class TresorGUI {
         this.screen = new TerminalScreen(terminal);
         authenticationController = new AuthenticationController(this);
         bankingController = new BankingController(this);
-        GUI_THREAD_FACTORY.createTextGUIThread(gui).invokeLater(SecureRunnableRunner.of(this::handle));
+
+        handle();
 
 
-    }
-
-    public static @NotNull ThreadGroup getThreadGroup() {
-        return threadGroup;
     }
 
     private void recordTimestamp(long timestamp) {
@@ -77,31 +73,22 @@ public final class TresorGUI {
     }
 
     private void handle() throws IOException {
-        gui = new MultiWindowTextGUI(screen);
+
         terminal.maximize();
+        gui = new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
         gui.addListener((textGUI, keyStroke) -> {
             log.debug("unhandled key event: {}", keyStroke);
             return false;
         });
+
         screen.startScreen();
-        try (terminal) {
-            log.info("Starting a TresorGUI for {}", terminal.getRemoteSocketAddress());
+        log.info("Starting a TresorGUI for {}", terminal.getRemoteSocketAddress());
 
-            // a regenerate refreshes the whole GUI
-            while (hasRequestRegenerate()) {
-                requestRegenerate = false;
-                List<Window> windows = List.copyOf(gui.getWindows());
-                windows.forEach(Window::close);
-                windows.forEach(gui::removeWindow);
-                screen.clear();
-                gui.addWindow(DashboardView.getDashboardWindow(this));
-            }
+        gui.addWindow(new DefaultWindow(this));
+        // }
+        ((AsynchronousTextGUIThread) gui.getGUIThread()).start();
 
-        } catch (SocketException e) {
-            log.info("Connection closed!");
-        } catch (Exception e) {
-            log.error("Error handling TelnetTerminal", e);
-        }
+
     }
 
 
