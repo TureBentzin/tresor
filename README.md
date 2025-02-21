@@ -32,10 +32,7 @@ provide information apart from the website.
 
 ## Tresor Display Windows
 
-The **Tresor Display Windows** are prototype C++ applications designed to connect to a TSOCK server. Their
-implementation is experimental and might deviate from the final TSOCK protocol upon its release. These display
-applications for Windows are subject to change or removal based on development progress and compatibility with the
-finalized TSOCK standard.
+**removed in current version**
 
 ## Building and Running the Tresor Server
 
@@ -67,12 +64,7 @@ To build and run the current version of the Tresor Server, follow these steps:
    git clone https://github.com/TureBentzin/tresor/
    ```
 
-3. **Navigate to the server folder**:
-   ```bash
-   cd tresor-server/Tresor
-   ```
-
-4. **Build the application with Maven**:
+3. **Build the application with Maven**:
    ```bash
    mvn clean install
    ```
@@ -87,18 +79,18 @@ To build and run the current version of the Tresor Server, follow these steps:
 
    The Git configuration details are compiled into the version information and will be displayed to the user.
 
-5. **Run the server**:
+4. **Run the server**:
    ```bash
    java -jar target/Tresor-<version>.jar
    ```
 
-6. **Connect clients**:
+5. **Connect clients**:
    Use any Telnet client to connect to the server:
    ```bash
    telnet <host> 23
    ```
 
-7. **Exit the GUI**:
+6. **Exit the GUI**:
    Navigate to "Settings" -> "Quit" -> "Yes" to close the application safely.
 
 ## Using the Nix Flake
@@ -107,6 +99,11 @@ This repo provides a nix flake (flake.nix), but because of the way the project i
 build the project using the flake right now.
 Im actively working on a solution to this problem, but for now, you have to use the manual build instructions above.
 Alternatively, you can use the nix-shell command to get a shell with all the required dependencies.
+
+### Refactoring
+
+The Project was refactored and restructured on 21.02.2025.
+The Nix flakes are now even less functional than before...
 
 ```bash
 nix-shell -p jdk23 maven git
@@ -124,7 +121,7 @@ You can import this configuration into your IntelliJ IDEA to build and run the s
 
 ## Translations
 
-Tresor uses "langfiles" in the `tresor-server/Tresor/src/main/resources/langfiles` directory to provide translations.
+Tresor uses "langfiles" in the `src/main/resources/langfiles` directory to provide translations.
 The files are in the format `langfile_<language id>.json`.
 The default language is English (en), and the application will fall back to English if a translation is missing.
 
