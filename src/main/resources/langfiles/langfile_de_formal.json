@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "{brand} {snapshot?} {dev?}",
+    "goodbye": "Auf Wiedersehen!",
+    "not_implemented": "Noch nicht implementiert!"
+  },
+  "window": {
+    "common": {
+      "close": "Schließen"
+    },
+    "default": {
+      "title": "TresorGUI"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "content": "Willkommen bei TresorGUI",
+      "not_authed": "Sie sind nicht authentifiziert! Bitte melden Sie sich zuerst an.",
+      "authed": "Sie sind als {username} authentifiziert.",
+      "login": "Anmelden"
+    },
+    "login": {
+      "title": "Anmeldung",
+      "content": "Bitte geben Sie Ihre Zugangsdaten ein:",
+      "server": "Server: ",
+      "username": "Benutzername: ",
+      "password": "Passwort: ",
+      "button": "Anmelden"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "language": {
+        "title": "Sprache",
+        "content": "Wählen Sie Ihre bevorzugte Sprache:"
+      },
+      "theme": {
+        "title": "Design",
+        "content": "Wählen Sie Ihr bevorzugtes Design:"
+      },
+      "debug": {
+        "title": "Fehlersuche",
+        "content": "Diese Informationen dienen ausschließlich zu Debugging-Zwecken:",
+        "windows": "Derzeit bekannte Fenster (aktuelles Fenster möglicherweise ausgeschlossen):"
+      },
+      "regenerate": {
+        "title": "Neu generieren",
+        "content": "Fenster verwerfen und Ihre Telnet-Ansicht neu generieren?",
+        "button": "Neu generieren"
+      },
+      "appearance": {
+        "title": "Erscheinungsbild"
+      },
+      "error": {
+        "title": "Fehler",
+        "content": "Hier können Sie einen Fehler simulieren:",
+        "button": "Fehler simulieren"
+      }
+    },
+    "color-test": {
+      "title": "Farben-Test",
+      "content": "Dieser Test zeigt Ihnen den verfügbaren Farbraum:"
+    },
+    "error": {
+      "title": "Fehler",
+      "auth": {
+        "user_not_found": "Benutzer nicht gefunden!",
+        "failure": "Authentifizierung fehlgeschlagen! Bitte überprüfen Sie Ihre Zugangsdaten.",
+        "not_allowed": "Die Authentifizierung wurde von Tresor abgelehnt.",
+        "api_error": "Es ist ein Fehler bei der Authentifizierung aufgetreten! Sie können es erneut versuchen."
+      },
+      "validations": {
+        "not_authed": "Sie sind nicht authentifiziert! Bitte melden Sie sich zuerst an."
+      }
+    }
+  },
+  "menu": {
+    "home": {
+      "title": "Startseite",
+      "dashboard": {
+        "title": "Dashboard"
+      },
+      "login": {
+        "title": "Anmeldung"
+      }
+    },
+    "about": {
+      "title": "Über",
+      "version": {
+        "title": "Version",
+        "content": "Laufende Version {brand} {version}!\n  -> {commit} auf {branch}\nKompiliert am {buildTime} von {buildUser}."
+      }
+    },
+    "system": {
+      "title": "System",
+      "settings": {
+        "title": "Einstellungen"
+      },
+      "quit": {
+        "title": "Beenden",
+        "content": "Möchten Sie wirklich beenden?"
+      }
+    }
+  }
+}

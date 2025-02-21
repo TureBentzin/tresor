@@ -11,6 +11,8 @@ import net.juligames.tresor.theme.CustomThemeManager;
 import net.juligames.tresor.utils.DemoException;
 import net.juligames.tresor.views.test.ColorTestView;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,6 +20,8 @@ import java.util.List;
 
 public class SettingsView {
 
+
+    private static final Logger log = LoggerFactory.getLogger(SettingsView.class);
 
     public static @NotNull Window getSettingsWindow(@NotNull TresorGUI gui) {
         TresorWindow window = new TresorWindow(gui, "window.settings");
@@ -93,6 +97,7 @@ public class SettingsView {
         comboBox.setSelectedItem(gui.getMessageSet());
         comboBox.addListener((selectedItem, oldSelection, ignored) -> {
             gui.setMessageSet(languages.get(selectedItem));
+            log.info("Switching language of {} to {}", gui.getTerminal().getRemoteSocketAddress().toString(), languages.get(selectedItem));
             try {
                 gui.getGui().getScreen().refresh();
             } catch (IOException ignoredException) {
@@ -113,9 +118,9 @@ public class SettingsView {
 
         ComboBox<String> comboBox = new ComboBox<>();
         CustomThemeManager.getRegisteredThemes().forEach(comboBox::addItem);
-        comboBox.setSelectedItem(gui.getGui().getTheme().toString());
+        comboBox.setSelectedItem(CustomThemeManager.identify(gui.getGui().getTheme()));
         comboBox.addListener((selectedItem, oldSelection, ignored) -> {
-            gui.getGui().setTheme(LanternaThemes.getRegisteredTheme(comboBox.getItem(selectedItem)));
+            gui.getGui().setTheme(CustomThemeManager.getRegisteredTheme(comboBox.getItem(selectedItem)));
             try {
                 gui.getGui().getScreen().refresh();
             } catch (IOException ignoredException) {

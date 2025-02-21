@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "{brand} {snapshot?} {dev?}",
+    "goodbye": "Pfiat di und mach’s guad!",
+    "not_implemented": "No ned fertig!"
+  },
+  "window": {
+    "common": {
+      "close": "Zuamacha"
+    },
+    "default": {
+      "title": "TresorGUI"
+    },
+    "dashboard": {
+      "title": "Armaturenbrettl",
+      "content": "Servus beianand bei TresorGUI!",
+      "not_authed": "Du bist ned eingloggt! Moch des glei amoi.",
+      "authed": "Gfrei mi, {username}, du bist drin!",
+      "login": "Einlogga"
+    },
+    "login": {
+      "title": "Einlogga",
+      "content": "Gib dei Zugangsdatn ei:",
+      "server": "Server: ",
+      "username": "Benutzaname: ",
+      "password": "Geheima Wörtal: ",
+      "button": "Rei mit da!"
+    },
+    "settings": {
+      "title": "Eistellunga",
+      "language": {
+        "title": "Sproch",
+        "content": "Wähl aus, wia d’App ausschaunga soi:"
+      },
+      "theme": {
+        "title": "D’Gwand",
+        "content": "Sich da a scheens Design aus:"
+      },
+      "debug": {
+        "title": "Fehlersuachn",
+        "content": "Des is bloß zum Rumfuchtln:",
+        "windows": "Die Fenster, de i grod kenn (vielleicht fehlt des aktuelle):"
+      },
+      "regenerate": {
+        "title": "No amoi macha",
+        "content": "Olle Fenster zum Deifi jaga und neibaut?",
+        "button": "Nei macha!"
+      },
+      "appearance": {
+        "title": "Wia’s ausschaut"
+      },
+      "error": {
+        "title": "Owa zefix!",
+        "content": "Da konnst an Fehler aufdenga:",
+        "button": "Fehla macha!"
+      }
+    },
+    "color-test": {
+      "title": "Farb-Test",
+      "content": "Da siechsd, wos farbmäßig geht:"
+    },
+    "error": {
+      "title": "Owa zefix!",
+      "auth": {
+        "user_not_found": "Den gibts ned!",
+        "failure": "Owa, des hod ned hihaut! Schau dei Datn o.",
+        "not_allowed": "D’ Tresor-Software hot g’sagt: Naa, des mach ma ned!",
+        "api_error": "Da is wos schiefganga! Probier’s halt no amoi."
+      },
+      "validations": {
+        "not_authed": "Du bist ned drin! Log di zerscht ei."
+      }
+    }
+  },
+  "menu": {
+    "home": {
+      "title": "Dahoam",
+      "dashboard": {
+        "title": "Armaturenbrettl"
+      },
+      "login": {
+        "title": "Einlogga"
+      }
+    },
+    "about": {
+      "title": "Üba de Gschicht",
+      "version": {
+        "title": "Version",
+        "content": "Laufade Version {brand} {version}!\n  -> {commit} auf {branch}\nZamg'schustert am {buildTime} vo {buildUser}."
+      }
+    },
+    "system": {
+      "title": "System",
+      "settings": {
+        "title": "Eistellunga"
+      },
+      "quit": {
+        "title": "Schluss macha",
+        "content": "Wüst echt schluss macha?"
+      }
+    }
+  }
+}

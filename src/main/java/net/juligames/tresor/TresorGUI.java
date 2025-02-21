@@ -71,7 +71,7 @@ public final class TresorGUI {
     private void handle() throws IOException {
         terminal.maximize();
         gui = new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
-        gui.setTheme(CustomThemeManager.getRegisteredTheme("befator"));
+        gui.setTheme(CustomThemeManager.getRegisteredTheme("blaster"));
         gui.addListener((textGUI, keyStroke) -> {
             log.debug("unhandled key event: {}", keyStroke);
             return false;
@@ -173,7 +173,8 @@ public final class TresorGUI {
         MessageDialog messageDialog = messageDialogBuilder.build();
         try {
             terminal.bell();
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
         MessageDialogButton messageDialogButton = messageDialog.showDialog(getGui());
 
         return switch (messageDialogButton) {
@@ -212,7 +213,7 @@ public final class TresorGUI {
         gui.addWindow(window);
     }
 
-    public @NotNull void resetTelnetView() {
+    public void resetTelnetView() {
         MultiWindowTextGUI gui = (MultiWindowTextGUI) getGui();
 
         List<Window> oldWindows = List.copyOf(gui.getWindows());
@@ -223,6 +224,7 @@ public final class TresorGUI {
 
         DefaultWindow defaultWindow = new DefaultWindow(this);
         staticWindows.add(defaultWindow);
+        gui.addWindow(defaultWindow);
     }
 
 

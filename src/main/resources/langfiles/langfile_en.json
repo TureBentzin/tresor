@@ -43,8 +43,8 @@
       },
       "regenerate": {
         "title": "Regenerate",
-        "content": "Apply changes and regenerate your Telnet view?",
-        "button": "Apply and regenerate"
+        "content": "Discard windows and regenerate your Telnet view?",
+        "button": "Regenerate"
       },
       "appearance": {
         "title": "Appearance"

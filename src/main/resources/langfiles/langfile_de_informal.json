@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "{brand} {snapshot?} {dev?}",
+    "goodbye": "Tschüss!",
+    "not_implemented": "Noch nicht umgesetzt!"
+  },
+  "window": {
+    "common": {
+      "close": "Schließen"
+    },
+    "default": {
+      "title": "TresorGUI"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "content": "Willkommen bei TresorGUI",
+      "not_authed": "Du bist nicht angemeldet! Bitte logge dich zuerst ein.",
+      "authed": "Du bist als {username} angemeldet.",
+      "login": "Einloggen"
+    },
+    "login": {
+      "title": "Login",
+      "content": "Gib deine Zugangsdaten ein:",
+      "server": "Server: ",
+      "username": "Benutzername: ",
+      "password": "Passwort: ",
+      "button": "Einloggen"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "language": {
+        "title": "Sprache",
+        "content": "Wähle deine bevorzugte Sprache:"
+      },
+      "theme": {
+        "title": "Design",
+        "content": "Wähle dein bevorzugtes Design:"
+      },
+      "debug": {
+        "title": "Debugging",
+        "content": "Diese Infos sind nur für Debugging-Zwecke:",
+        "windows": "Aktuell bekannte Fenster (aktuelles Fenster evtl. nicht dabei):"
+      },
+      "regenerate": {
+        "title": "Neu laden",
+        "content": "Fenster verwerfen und deine Telnet-Ansicht neu laden?",
+        "button": "Neu laden"
+      },
+      "appearance": {
+        "title": "Aussehen"
+      },
+      "error": {
+        "title": "Fehler",
+        "content": "Hier kannst du einen Fehler simulieren:",
+        "button": "Fehler simulieren"
+      }
+    },
+    "color-test": {
+      "title": "Farbtest",
+      "content": "Dieser Test zeigt dir den verfügbaren Farbraum:"
+    },
+    "error": {
+      "title": "Fehler",
+      "auth": {
+        "user_not_found": "Benutzer nicht gefunden!",
+        "failure": "Anmeldung fehlgeschlagen! Überprüfe deine Zugangsdaten.",
+        "not_allowed": "Die Anmeldung wurde von Tresor abgelehnt.",
+        "api_error": "Es gab einen Fehler bei der Anmeldung! Versuch es nochmal."
+      },
+      "validations": {
+        "not_authed": "Du bist nicht angemeldet! Bitte logge dich zuerst ein."
+      }
+    }
+  },
+  "menu": {
+    "home": {
+      "title": "Startseite",
+      "dashboard": {
+        "title": "Dashboard"
+      },
+      "login": {
+        "title": "Login"
+      }
+    },
+    "about": {
+      "title": "Über",
+      "version": {
+        "title": "Version",
+        "content": "Laufende Version {brand} {version}!\n  -> {commit} auf {branch}\nKompiliert am {buildTime} von {buildUser}."
+      }
+    },
+    "system": {
+      "title": "System",
+      "settings": {
+        "title": "Einstellungen"
+      },
+      "quit": {
+        "title": "Beenden",
+        "content": "Willst du wirklich beenden?"
+      }
+    }
+  }
+}
