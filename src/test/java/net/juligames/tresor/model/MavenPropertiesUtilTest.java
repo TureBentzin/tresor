@@ -20,7 +20,7 @@ class MavenPropertiesUtilTest {
     void getArtifactId() {
         String artifactId = ProjectPropertiesUtil.getArtifactId();
         log.info("ArtifactId: {}", artifactId);
-        assertNotNull(artifactId);
+        assertNotNull(artifactId, "ArtifactId is null");
     }
 
 
@@ -28,6 +28,43 @@ class MavenPropertiesUtilTest {
     void getGitCommit() {
         String gitCommit = ProjectPropertiesUtil.getGitCommit();
         log.info("GitCommit: {}", gitCommit);
-        assertNotNull(gitCommit);
+        assertNotNull(gitCommit, "Unable to find current git commit");
     }
+
+    @Test
+    void getGitBranch() {
+        String gitBranch = ProjectPropertiesUtil.getGitBranch();
+        log.info("GitBranch: {}", gitBranch);
+        assertNotNull(gitBranch, "Unable to find current git branch");
+    }
+
+    @Test
+    void getVersion() {
+        String version = ProjectPropertiesUtil.getGitVersion();
+        log.info("Version: {}", version);
+        assertNotNull(version, "Unable to find current version");
+    }
+
+    @Test
+    void getBuildTime() {
+        String buildTime = ProjectPropertiesUtil.getGitBuildTime();
+        log.info("BuildTime: {}", buildTime);
+        assertNotNull(buildTime, "Unable to find build time");
+    }
+
+    @Test
+    void getBuildUserEmail() {
+        String buildUserEmail = ProjectPropertiesUtil.getGitBuildUserEmail();
+        log.info("User Email: {}", buildUserEmail);
+        assertNotNull(buildUserEmail, "Git user email not set");
+    }
+
+    @Test
+    void getBuildUserName() {
+        String buildUserName = ProjectPropertiesUtil.getGitBuildUserName();
+        log.info("User Name: {}", buildUserName);
+        assertNotNull(buildUserName, "Git user name not set");
+    }
+
+
 }
