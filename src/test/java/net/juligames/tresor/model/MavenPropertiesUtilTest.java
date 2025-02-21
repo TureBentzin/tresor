@@ -21,6 +21,7 @@ class MavenPropertiesUtilTest {
         String artifactId = ProjectPropertiesUtil.getArtifactId();
         log.info("ArtifactId: {}", artifactId);
         assertNotNull(artifactId, "ArtifactId is null");
+        assertFalse(artifactId.isEmpty(), "ArtifactId is empty");
     }
 
 
@@ -29,6 +30,7 @@ class MavenPropertiesUtilTest {
         String gitCommit = ProjectPropertiesUtil.getGitCommit();
         log.info("GitCommit: {}", gitCommit);
         assertNotNull(gitCommit, "Unable to find current git commit");
+        assertFalse(gitCommit.isEmpty(), "Unable to find current git commit");
     }
 
     @Test
@@ -36,6 +38,7 @@ class MavenPropertiesUtilTest {
         String gitBranch = ProjectPropertiesUtil.getGitBranch();
         log.info("GitBranch: {}", gitBranch);
         assertNotNull(gitBranch, "Unable to find current git branch");
+        assertFalse(gitBranch.isEmpty(), "Unable to find current git branch");
     }
 
     @Test
@@ -43,6 +46,7 @@ class MavenPropertiesUtilTest {
         String version = ProjectPropertiesUtil.getGitVersion();
         log.info("Version: {}", version);
         assertNotNull(version, "Unable to find current version");
+        assertFalse(version.isEmpty(), "Unable to find current version");
     }
 
     @Test
@@ -50,6 +54,7 @@ class MavenPropertiesUtilTest {
         String buildTime = ProjectPropertiesUtil.getGitBuildTime();
         log.info("BuildTime: {}", buildTime);
         assertNotNull(buildTime, "Unable to find build time");
+        assertFalse(buildTime.isEmpty(), "Unable to find build time");
     }
 
     @Test
@@ -57,6 +62,7 @@ class MavenPropertiesUtilTest {
         String buildUserEmail = ProjectPropertiesUtil.getGitBuildUserEmail();
         log.info("User Email: {}", buildUserEmail);
         assertNotNull(buildUserEmail, "Git user email not set");
+        assertFalse(buildUserEmail.isEmpty(), "Git user email not set");
     }
 
     @Test
@@ -64,6 +70,7 @@ class MavenPropertiesUtilTest {
         String buildUserName = ProjectPropertiesUtil.getGitBuildUserName();
         log.info("User Name: {}", buildUserName);
         assertNotNull(buildUserName, "Git user name not set");
+        assertFalse(buildUserName.isEmpty(), "Git user name not set");
     }
 
 
