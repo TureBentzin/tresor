@@ -10,6 +10,7 @@ import net.juligames.tresor.views.DashboardView;
 import net.juligames.tresor.views.SettingsView;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class SettingsMenu {
@@ -22,7 +23,7 @@ public class SettingsMenu {
                             tresorGUI.getText("menu.system.quit.title", true),
                             tresorGUI.getText("menu.system.quit.content", false),
                             MessageDialogButton.Yes, MessageDialogButton.Abort) == MessageDialogButton.Yes) {
-                        DashboardView.getDashboardWindow(tresorGUI).close();
+                        tresorGUI.quit();
                     }
 
                 }));

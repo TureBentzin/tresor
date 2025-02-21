@@ -1,6 +1,8 @@
 package net.juligames.tresor;
 
 
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
@@ -11,6 +13,8 @@ import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import net.juligames.tresor.controller.AuthenticationController;
 import net.juligames.tresor.controller.BankingController;
 import net.juligames.tresor.lang.Translations;
+import net.juligames.tresor.model.ProjectPropertiesUtil;
+import net.juligames.tresor.theme.CustomThemeManager;
 import net.juligames.tresor.utils.SecureRunnableRunner;
 import net.juligames.tresor.utils.TresorExceptionHandler;
 import net.juligames.tresor.views.DashboardView;
@@ -27,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -66,6 +71,7 @@ public final class TresorGUI {
     private void handle() throws IOException {
         terminal.maximize();
         gui = new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
+        gui.setTheme(CustomThemeManager.getRegisteredTheme("befator"));
         gui.addListener((textGUI, keyStroke) -> {
             log.debug("unhandled key event: {}", keyStroke);
             return false;
@@ -189,13 +195,71 @@ public final class TresorGUI {
     public void switchWindow(@NotNull Window window) {
         MultiWindowTextGUI gui = (MultiWindowTextGUI) getGui();
 
-        if (!(window instanceof TresorWindow twin && !twin.isPermanent()))
-            while (gui.getActiveWindow() != null) {
-                if (gui.getActiveWindow() instanceof DefaultWindow) {
-                    break;
-                }
-                gui.getActiveWindow().close();
+        List<Window> oldWindows = List.copyOf(gui.getWindows());
+
+        for (Window oldWindow : oldWindows) {
+            if (oldWindow instanceof DefaultWindow) {
+                continue;
             }
+            if (!staticWindows.contains(oldWindow)) {
+                oldWindow.close();
+            }
+        }
+
         gui.addWindow(window);
+    }
+
+    public @NotNull void resetTelnetView() {
+        MultiWindowTextGUI gui = (MultiWindowTextGUI) getGui();
+
+        List<Window> oldWindows = List.copyOf(gui.getWindows());
+
+        for (Window oldWindow : oldWindows) {
+            oldWindow.close();
+        }
+
+        DefaultWindow defaultWindow = new DefaultWindow(this);
+        staticWindows.add(defaultWindow);
+    }
+
+
+    public void quit() {
+        Thread thread = new Thread(this::quitBlocking);
+        thread.start();
+    }
+
+    private void quitBlocking() {
+
+        AsynchronousTextGUIThread guiThread = (AsynchronousTextGUIThread) getGui().getGUIThread();
+        guiThread.stop();
+        log.info("Stopping TresorGUI for {}", terminal.getRemoteSocketAddress());
+        try {
+            guiThread.waitForStop();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            terminal.setTitle("Tresor - Quitting");
+            terminal.setBackgroundColor(TextColor.ANSI.BLACK);
+            terminal.setForegroundColor(TextColor.ANSI.WHITE);
+
+            screen.clear();
+            screen.close();
+
+            terminal.clearScreen();
+            getGui().getWindows().forEach(Window::close);
+
+            String quitMessage = getText("app.goodbye", false);
+            String brand = ProjectPropertiesUtil.getArtifactId();
+            terminal.putString(brand + "> " + quitMessage + "\n");
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            terminal.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

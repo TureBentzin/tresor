@@ -32,6 +32,10 @@
         "title": "Language",
         "content": "Select your preferred language:"
       },
+      "theme": {
+        "title": "Theme",
+        "content": "Select your preferred theme:"
+      },
       "debug": {
         "title": "Debug",
         "content": "This information is only for debugging purposes:",
