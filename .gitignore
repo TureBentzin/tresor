@@ -37,3 +37,6 @@ build/
 ### TRESOR ###
 
 *.log
+
+## NIX ##
+*.lock
