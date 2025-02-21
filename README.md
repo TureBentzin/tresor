@@ -130,5 +130,18 @@ The default language is English (en), and the application will fall back to Engl
 Tresor is heavily work in progress, and the translations (with their keys, params, etc.) are subject to change.
 For testing purposes, I have included a German translation file (`langfile_de.json`).
 I may update the german translation file as I develop the application further, but i cant guarantee that it will always
-be up to date. 
+be up to date.
 
+## Themes
+
+Tresor supports themes, which are located in the `src/main/resources/themes` directory.
+The default theme is currently set to `blaster.properties`.
+
+Themes in the correct folder and format are loaded automatically when the application starts.
+
+### Creating Themes
+
+To create a new theme, create a new `.properties` file in the `src/main/resources/themes` directory.
+The filename will be the name of the theme (excluding the `.properties` extension).
+
+I suggest copying an existing theme file and modifying it to create a new theme.
