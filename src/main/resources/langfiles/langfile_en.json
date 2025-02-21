@@ -1,14 +1,18 @@
 {
   "app": {
     "title": "{brand} {snapshot?} {dev?}",
-    "goodbye": "Goodbye!"
+    "goodbye": "Goodbye!",
+    "not_implemented": "Not implemented yet!"
   },
   "window": {
     "common": {
       "close": "Close"
     },
+    "default": {
+      "title": "TresorGUI"
+    },
     "dashboard": {
-      "title": "TresorGUI",
+      "title": "Dashboard",
       "content": "Welcome to TresorGUI",
       "not_authed": "You are not authenticated! Please login first.",
       "authed": "You are authenticated as {username}.",
@@ -53,6 +57,9 @@
         "failure": "Authentication failed! Please check your credentials.",
         "not_allowed": "Authentication was denied by tresor",
         "api_error": "An error occurred while trying to authenticate! You can attempt to try again."
+      },
+      "validations": {
+        "not_authed": "You are not authenticated! Please login first."
       }
     }
   },

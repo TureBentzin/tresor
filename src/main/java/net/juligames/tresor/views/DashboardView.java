@@ -21,12 +21,9 @@ import java.util.Map;
  */
 public class DashboardView {
 
-    private static @NotNull Map<TresorGUI, Window> dashboardViewMap = new HashMap<>();
 
     public static @NotNull Window getDashboardWindow(@NotNull TresorGUI gui) {
-        if (dashboardViewMap.containsKey(gui)) {
-            return dashboardViewMap.get(gui);
-        }
+
         TresorWindow window = new TresorWindow(gui, "window.dashboard");
         if (gui.getAuthenticationController().isAuthenticated()) {
             window.getContentPanel().addComponent(new Label(gui.getText("window.dashboard.content", false)));
@@ -38,13 +35,10 @@ public class DashboardView {
                 gui.getGui().addWindowAndWait(LoginView.getLoginWindow(gui));
             }));
         }
-        dashboardViewMap.put(gui, window);
+
         return window;
     }
 
-    public static void remove(@NotNull TresorGUI gui) {
-        dashboardViewMap.remove(gui);
-    }
 
     private DashboardView() {
         throw new IllegalStateException("Utility class");

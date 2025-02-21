@@ -59,7 +59,7 @@ public class LoginView {
         passwordTextBox.setMask('*');
 
         Button loginButton = new Button(gui.getText("window.login.button", false), () -> {
-            log.info("Login button pressed: Server: {}, Username: {}, Password: {}",
+            log.debug("Login button pressed: Server: {}, Username: {}, Password: {}",
                     serverTextBox.getText(),
                     usernameTextBox.getText(),
                     passwordTextBox.getText()
@@ -70,8 +70,7 @@ public class LoginView {
                 result = gui.getAuthenticationController().authenticate(serverTextBox.getText(), usernameTextBox.getText(), passwordTextBox.getText());
             } while (switch (result) {
                 case SUCCESS:
-                    gui.getGui().removeWindow(gui.getGui().getActiveWindow());
-                    gui.regenerate();
+                    gui.showError("app.not_implemented"); //TODO
                     yield false;
                 case USER_NOT_FOUND:
                     yield gui.showError("auth.user_not_found");
@@ -84,11 +83,8 @@ public class LoginView {
             } && maxTries-- > 0);
         });
 
-
-
         panel.addComponent(new EmptySpace(inputSize));
         panel.addComponent(loginButton);
-
 
         return panel.withBorder(Borders.singleLine(gui.getText("window.login.title", false)));
     }

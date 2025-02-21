@@ -28,7 +28,7 @@ public class SettingsMenu {
                 }));
         menu.add(new MenuItem(tresorGUI.getText("menu.system.settings.title", true),
                 () -> {
-                    tresorGUI.getGui().setActiveWindow(SettingsView.getSettingsWindow(tresorGUI));
+                    tresorGUI.switchWindow(SettingsView.getSettingsWindow(tresorGUI));
                 }));
         return menu;
     }

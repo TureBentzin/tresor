@@ -14,12 +14,8 @@ import java.util.List;
 
 public class SettingsView {
 
-    private static final @NotNull HashMap<TresorGUI, Window> settingsViewMap = new HashMap<>();
 
     public static @NotNull Window getSettingsWindow(@NotNull TresorGUI gui) {
-        if (settingsViewMap.containsKey(gui)) {
-            return settingsViewMap.get(gui);
-        }
         TresorWindow window = new TresorWindow(gui, "window.settings");
         window.setStrictFocusChange(true);
         window.getContentPanel().addComponent(new Button(gui.getText("window.color-test.title", false), () -> {
@@ -32,17 +28,12 @@ public class SettingsView {
 
         appearancePanel.addComponent(new Label(gui.getText("window.settings.regenerate.content", false)));
         appearancePanel.addComponent(getRegenerateButton(gui));
-        // appearancePanel.addComponent(2, new CheckBox("placeholder"));
-
-        //window.setFocusedInteractable(languageSelection.getChildren().stream().filter(component -> component instanceof Interactable).map(component -> (Interactable) component).findFirst().orElse(null));
-        // Utils.findFocus(window, languageSelection);
 
         appearancePanel.setPreferredSize(appearancePanel.calculatePreferredSize());
         window.getContentPanel().addComponent(appearancePanel.withBorder(Borders.singleLine(gui.getText("window.settings.appearance.title", false))));
 
         window.getContentPanel().addComponent(getDebugInformation(gui));
 
-        settingsViewMap.put(gui, window);
         return window;
     }
 
@@ -52,13 +43,18 @@ public class SettingsView {
         debugPanel.addComponent(new Label("JWT Fingerprint: " + gui.getAuthenticationController().getJwtFingerprint()));
 
         debugPanel.addComponent(gui.getTextAsLabel("window.settings.debug.windows", false));
-        Table<String> table = new Table<>("Position", "Window");
+        Table<String> table = new Table<>("Position", "Window", "Hash");
         for (Window window : gui.getGui().getWindows()) {
             String windowName = window.getTitle();
             if (window instanceof TresorWindow) {
                 windowName += "(" + ((TresorWindow) window).getContentName() + ")";
             }
-            table.getTableModel().addRow(window.getPosition().toString(), windowName);
+
+            if (windowName.isEmpty()) {
+                windowName = window.getClass().getSimpleName();
+            }
+
+            table.getTableModel().addRow(window.getPosition().toString(), windowName, String.valueOf(window.hashCode()));
         }
         debugPanel.addComponent(table);
 
@@ -95,7 +91,7 @@ public class SettingsView {
     private static @NotNull Button getRegenerateButton(@NotNull TresorGUI gui) {
         Button button = new Button(gui.getText("window.settings.regenerate.button", false));
         button.addListener((button1) -> {
-            gui.regenerate();
+            gui.showError("app.not_implemented"); //TODO regenerate?
             try {
                 gui.getGui().getScreen().refresh();
             } catch (IOException e) {
@@ -105,10 +101,6 @@ public class SettingsView {
         return button;
     }
 
-
-    public static void remove(@NotNull TresorGUI gui) {
-        settingsViewMap.remove(gui);
-    }
 
     private SettingsView() {
         throw new IllegalStateException("Utility class");

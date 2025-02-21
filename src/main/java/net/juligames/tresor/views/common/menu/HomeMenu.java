@@ -20,13 +20,12 @@ public class HomeMenu {
     @Contract("_ -> new")
     private static @NotNull MenuItem getDashboardItem(@NotNull TresorGUI tresorGUI) {
         return new MenuItem(tresorGUI.getText("menu.home.dashboard.title", true),
-                () -> tresorGUI.getGui().setActiveWindow(DashboardView.getDashboardWindow(tresorGUI)));
+                () -> tresorGUI.switchWindow(DashboardView.getDashboardWindow(tresorGUI)));
     }
 
-    //TEMP
     private static @NotNull MenuItem getLoginItem(@NotNull TresorGUI tresorGUI) {
         return new MenuItem(tresorGUI.getText("menu.home.login.title", true),
-                () -> tresorGUI.getGui().addWindowAndWait(LoginView.getLoginWindow(tresorGUI)));
+                () -> tresorGUI.switchWindow(LoginView.getLoginWindow(tresorGUI)));
     }
 
     private HomeMenu() {

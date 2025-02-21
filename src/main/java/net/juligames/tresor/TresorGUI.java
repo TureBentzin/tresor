@@ -12,6 +12,7 @@ import net.juligames.tresor.controller.AuthenticationController;
 import net.juligames.tresor.controller.BankingController;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.utils.SecureRunnableRunner;
+import net.juligames.tresor.utils.TresorExceptionHandler;
 import net.juligames.tresor.views.DashboardView;
 import net.juligames.tresor.views.DefaultWindow;
 import net.juligames.tresor.views.SettingsView;
@@ -41,7 +42,6 @@ public final class TresorGUI {
     private final @NotNull TelnetTerminal terminal;
     private final @NotNull Screen screen;
     private @Nullable WindowBasedTextGUI gui;
-    private boolean requestRegenerate = true;
     private @NotNull String messageSet = Translations.DEFAULT_SET;
 
     /**
@@ -61,19 +61,9 @@ public final class TresorGUI {
         bankingController = new BankingController(this);
 
         handle();
-
-
-    }
-
-    private void recordTimestamp(long timestamp) {
-        if (timestamps.remainingCapacity() == 0) {
-            timestamps.poll(); //ring buffer
-        }
-        timestamps.offer(timestamp);
     }
 
     private void handle() throws IOException {
-
         terminal.maximize();
         gui = new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
         gui.addListener((textGUI, keyStroke) -> {
@@ -84,10 +74,15 @@ public final class TresorGUI {
         screen.startScreen();
         log.info("Starting a TresorGUI for {}", terminal.getRemoteSocketAddress());
 
-        gui.addWindow(new DefaultWindow(this));
-        // }
-        ((AsynchronousTextGUIThread) gui.getGUIThread()).start();
+        DefaultWindow defaultWindow = new DefaultWindow(this);
 
+        staticWindows.add(defaultWindow);
+        gui.addWindow(defaultWindow);
+
+        AsynchronousTextGUIThread guiThread = (AsynchronousTextGUIThread) gui.getGUIThread();
+        guiThread.setExceptionHandler(new TresorExceptionHandler(this));
+
+        guiThread.start();
 
     }
 
@@ -134,50 +129,12 @@ public final class TresorGUI {
         return messageSet;
     }
 
-    public int calculateFPS() {
-        long[] times = getTimestamps();
-        int count = times.length;
-
-        if (count < 2) {
-            return 0;
-        }
-
-        long first = times[0];
-        long last = times[count - 1];
-        long duration = last - first;
-
-        if (duration <= 0) {
-            return 0;
-        }
-
-        return (int) ((count - 1) * 1000 / duration);
-    }
-
     public void setMessageSet(@NotNull String messageSet) {
         if (Translations.getAvailableMessageSets().contains(messageSet)) {
             this.messageSet = messageSet;
         } else {
             log.warn("Message set {} not available", messageSet);
         }
-    }
-
-    //remove all cached elements, then create new ones
-    public void regenerate() {
-        Common.remove(this);
-        DashboardView.remove(this);
-        SettingsView.remove(this);
-        requestRegenerate();
-        getGui().getWindows().stream().toList().forEach(Window::close);
-
-    }
-
-    public boolean hasRequestRegenerate() {
-        return requestRegenerate;
-    }
-
-    @ApiStatus.Internal
-    public void requestRegenerate() {
-        this.requestRegenerate = true;
     }
 
     public @NotNull AuthenticationController getAuthenticationController() {
@@ -224,13 +181,21 @@ public final class TresorGUI {
         return bankingController;
     }
 
+    /**
+     * Closes the old window if it is not static and adds the new window to the GUI
+     *
+     * @param window the new window
+     */
     public void switchWindow(@NotNull Window window) {
         MultiWindowTextGUI gui = (MultiWindowTextGUI) getGui();
-        Window old = gui.getActiveWindow();
-        if (old != null && !staticWindows.contains(old)) {
-            old.close();
-        }
-        gui.removeWindow(old);
+
+        if (!(window instanceof TresorWindow twin && !twin.isPermanent()))
+            while (gui.getActiveWindow() != null) {
+                if (gui.getActiveWindow() instanceof DefaultWindow) {
+                    break;
+                }
+                gui.getActiveWindow().close();
+            }
         gui.addWindow(window);
     }
 }

@@ -93,4 +93,11 @@ public class TresorWindow extends BasicWindow {
     public @NotNull String getContentName() {
         return contentName;
     }
+
+    public static void checkAuthorization(@NotNull TresorGUI gui) {
+        if (!gui.getAuthenticationController().isAuthenticated()) {
+            gui.showError("validation.not_authed");
+            gui.switchWindow(LoginView.getLoginWindow(gui));
+        }
+    }
 }
