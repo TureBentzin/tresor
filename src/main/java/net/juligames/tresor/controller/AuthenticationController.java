@@ -4,11 +4,15 @@ package net.juligames.tresor.controller;
 import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.ConfigModel;
+import net.juligames.tresor.rest.Authentication;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -63,6 +67,17 @@ public class AuthenticationController {
         if (password.isEmpty()) {
             return AuthenticationResult.FAILURE;
         }
+
+        URL url;
+        try {
+
+            URI uri = URI.create(host + "/api/v1/auth/login");
+            url = uri.toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
+        RESTCaller.call(url, null, RESTCaller.Method.POST, new Authentication(username, password));
 
         this.username = username;
         //TODO
