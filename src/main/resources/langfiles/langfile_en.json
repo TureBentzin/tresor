@@ -48,6 +48,11 @@
       },
       "appearance": {
         "title": "Appearance"
+      },
+      "error": {
+        "title": "Error",
+        "content": "This lets you simulate an error:",
+        "button": "Simulate error"
       }
     },
     "color-test": {

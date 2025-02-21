@@ -171,6 +171,9 @@ public final class TresorGUI {
         }
 
         MessageDialog messageDialog = messageDialogBuilder.build();
+        try {
+            terminal.bell();
+        } catch (IOException ignored) {}
         MessageDialogButton messageDialogButton = messageDialog.showDialog(getGui());
 
         return switch (messageDialogButton) {

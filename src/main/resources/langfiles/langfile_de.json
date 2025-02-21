@@ -11,7 +11,10 @@
       "title": "Einstellungen",
       "language": {
         "title": "Sprache"
-      }
+      },
+        "theme": {
+            "title": "Design"
+        }
     }
   },
   "menu": {

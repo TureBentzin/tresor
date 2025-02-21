@@ -8,6 +8,7 @@ import com.googlecode.lanterna.gui2.table.Table;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.theme.CustomThemeManager;
+import net.juligames.tresor.utils.DemoException;
 import net.juligames.tresor.views.test.ColorTestView;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +39,8 @@ public class SettingsView {
         window.getContentPanel().addComponent(appearancePanel.withBorder(Borders.singleLine(gui.getText("window.settings.appearance.title", false))));
 
         window.getContentPanel().addComponent(getDebugInformation(gui));
+
+        window.getContentPanel().addComponent(errorTests(gui));
 
         return window;
     }
@@ -137,7 +140,14 @@ public class SettingsView {
         return button;
     }
 
-
+    private static @NotNull Container errorTests(@NotNull TresorGUI gui) {
+        Panel errorPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        errorPanel.addComponent(new Label(gui.getText("window.settings.error.content", false)));
+        errorPanel.addComponent(new Button(gui.getText("window.settings.error.button", false), () -> {
+            throw new DemoException("Test exception");
+        }));
+        return errorPanel.withBorder(Borders.singleLine(gui.getText("window.settings.error.title", false)));
+    }
 
 
     private SettingsView() {

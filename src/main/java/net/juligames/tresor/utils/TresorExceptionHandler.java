@@ -43,12 +43,20 @@ public class TresorExceptionHandler implements TextGUIThread.ExceptionHandler {
     }
 
     private void showError(@NotNull Exception e) {
-        gui.getGui().getActiveWindow().close();
+        try {
+            gui.getTerminal().bell();
+        } catch (IOException ignored) {
+        }
         int errorID = Objects.hash(gui, e);
 
         String message = e.getMessage() + "\n Error ID: " + errorID;
 
-        log.error("Error ID: {}", errorID, e);
+        if (!(e instanceof DemoException)) {
+            log.error("Error ID: {}", errorID, e);
+        } else {
+            log.error("Error ID: {}", errorID);
+        }
+
 
         gui.getGui().addWindowAndWait(new MessageDialogBuilder()
                 .setTitle("Error: " + e.getClass().getSimpleName())
