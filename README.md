@@ -39,8 +39,8 @@ provide information apart from the website.
 To build and run the current version of the Tresor Server, follow these steps:
 
 1. **Install Required Software**:
-    - **Java Development Kit (JDK)**: Ensure you have JDK 17 or later installed. You can download it
-      from [Adoptium](https://adoptium.net/) or [Oracle](https://www.oracle.com/java/technologies/downloads/).
+    - **Java Development Kit (JDK)**: Ensure you have JDK 21 or later installed. You can download it
+      from [Adoptium](https://adoptium.net/de/temurin/releases/) or [Oracle](https://www.oracle.com/java/technologies/downloads/).
     - **Maven**: Apache Maven is required for building the project. Install it
       from [Maven Download](https://maven.apache.org/download.cgi) and follow
       the [installation guide](https://maven.apache.org/install.html).
