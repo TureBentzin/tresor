@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
@@ -32,24 +33,19 @@ public class Tresor {
     }
 
     public static void main(@NotNull String @NotNull [] args) throws IOException {
-
-        //setup
         config = DevConfig.getInstance();
 
         TelnetTerminalServer server = new TelnetTerminalServer(23);
         ServerSocket serverSocket = server.getServerSocket();
         log.info("Server started on {}:{}", serverSocket.getInetAddress(), serverSocket.getLocalPort());
 
-        List<String> availableMessageSets = Translations.getAvailableMessageSets();
-        //TODO provide message sets
+        Translations.getAvailableMessageSets(); //load translations
 
         while (true) {
             log.info("Waiting for connection...");
             TelnetTerminal terminal = server.acceptConnection();
-             new TresorGUI(terminal);
+            new TresorGUI(terminal);
             log.info("Accepted connection from {}", terminal.getRemoteSocketAddress());
         }
-
-        //screen.stopScreen();
     }
 }
