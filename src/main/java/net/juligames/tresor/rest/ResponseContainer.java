@@ -15,24 +15,30 @@ public class ResponseContainer<T> {
 
     @Contract("_ -> new")
     public static @NotNull <T> ResponseContainer<T> successful(@NotNull T response) {
-        return new ResponseContainer<>(response, null, null);
+        return new ResponseContainer<>(response, null, null, null);
     }
 
     @Contract("_ -> new")
     public static @NotNull <T> ResponseContainer<T> unauthorized(@NotNull UnauthorizedResponse unauthorizedResponse) {
-        return new ResponseContainer<>(null, unauthorizedResponse, null);
+        return new ResponseContainer<>(null, unauthorizedResponse, null, null);
     }
 
     @Contract("_ -> new")
     public static @NotNull <T> ResponseContainer<T> differentJson(@NotNull String differentJson) {
-        return new ResponseContainer<>(null, null, differentJson);
+        return new ResponseContainer<>(null, null, differentJson, null);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull <T> ResponseContainer<T> unprocessableEntity(@NotNull UnprocessableEntity unprocessableEntity) {
+        return new ResponseContainer<>(null, null, null, unprocessableEntity);
     }
 
 
     public enum ResponseType {
         RESPONSE,
         UNAUTHORIZED,
-        DIFFERENT_JSON
+        UNPROCESSABLE_ENTITY,
+        DIFFERENT_JSON,
     }
 
     private final @Nullable T response;
@@ -41,26 +47,47 @@ public class ResponseContainer<T> {
 
     private final @Nullable String differentJson;
 
+    private final @Nullable UnprocessableEntity unprocessableEntity;
+
     private final @NotNull ResponseType responseType;
 
+
     @SuppressWarnings("ConstantValue")
-    private ResponseContainer(@Nullable T response, @Nullable UnauthorizedResponse unauthorizedResponse, @Nullable String differentJson) {
-        this.response = response;
-        this.unauthorizedResponse = unauthorizedResponse;
-        this.differentJson = differentJson;
-        responseType = response != null ? ResponseType.RESPONSE : unauthorizedResponse != null ? ResponseType.UNAUTHORIZED : ResponseType.DIFFERENT_JSON;
+    private ResponseContainer(@Nullable T response, @Nullable UnauthorizedResponse unauthorizedResponse, @Nullable String differentJson, @Nullable UnprocessableEntity unprocessableEntity) {
 
-        if (responseType == ResponseType.RESPONSE && (unauthorizedResponse != null || differentJson != null)) {
-            throw new IllegalArgumentException("Response type is RESPONSE, but unauthorizedResponse or differentJson is not null");
+
+        if (response != null) {
+            responseType = ResponseType.RESPONSE;
+            this.response = response;
+
+            this.unauthorizedResponse = null;
+            this.differentJson = null;
+            this.unprocessableEntity = null;
+
+        } else if (unauthorizedResponse != null) {
+            responseType = ResponseType.UNAUTHORIZED;
+            this.unauthorizedResponse = unauthorizedResponse;
+
+            this.response = null;
+            this.differentJson = null;
+            this.unprocessableEntity = null;
+
+        } else if (differentJson != null) {
+            responseType = ResponseType.DIFFERENT_JSON;
+            this.differentJson = differentJson;
+
+            this.response = null;
+            this.unauthorizedResponse = null;
+            this.unprocessableEntity = null;
+        } else {
+            responseType = ResponseType.UNPROCESSABLE_ENTITY;
+            this.unprocessableEntity = unprocessableEntity;
+
+            this.response = null;
+            this.unauthorizedResponse = null;
+            this.differentJson = null;
         }
 
-        if (responseType == ResponseType.UNAUTHORIZED && (response != null || differentJson != null)) {
-            throw new IllegalArgumentException("Response type is UNAUTHORIZED, but response or differentJson is not null");
-        }
-
-        if (responseType == ResponseType.DIFFERENT_JSON && (response != null || unauthorizedResponse != null)) {
-            throw new IllegalArgumentException("Response type is DIFFERENT_JSON, but response or unauthorizedResponse is not null");
-        }
 
     }
 
@@ -76,12 +103,28 @@ public class ResponseContainer<T> {
         return response;
     }
 
+    public @Nullable UnprocessableEntity getUnprocessableEntity() {
+        return unprocessableEntity;
+    }
+
     public @NotNull ResponseType getResponseType() {
         return responseType;
     }
 
     public boolean isSuccessful() {
         return responseType == ResponseType.RESPONSE;
+    }
+
+    public boolean isUnauthorized() {
+        return responseType == ResponseType.UNAUTHORIZED;
+    }
+
+    public boolean isDifferentJson() {
+        return responseType == ResponseType.DIFFERENT_JSON;
+    }
+
+    public boolean isUnprocessableEntity() {
+        return responseType == ResponseType.UNPROCESSABLE_ENTITY;
     }
 
     @Override

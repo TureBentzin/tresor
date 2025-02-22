@@ -70,7 +70,7 @@ public class LoginView {
                 result = gui.getAuthenticationController().authenticate(serverTextBox.getText(), usernameTextBox.getText(), passwordTextBox.getText());
             } while (switch (result) {
                 case SUCCESS:
-                    gui.showError("app.not_implemented"); //TODO
+                    gui.switchWindow(DashboardView.getDashboardWindow(gui));
                     yield false;
                 case USER_NOT_FOUND:
                     yield gui.showError("auth.user_not_found");

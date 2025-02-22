@@ -65,8 +65,10 @@
         "user_not_found": "User not found!",
         "failure": "Authentication failed! Please check your credentials.",
         "not_allowed": "Authentication was denied by tresor",
-        "api_error": "An error occurred while trying to authenticate! You can attempt to try again."
+        "api_error": "An error occurred while trying to authenticate! You can attempt to try again.",
+        "unauthorized": "{error}"
       },
+      "unprocessable_entity": "Error for {loc}: {msg}",
       "validations": {
         "not_authed": "You are not authenticated! Please login first."
       }

@@ -5,8 +5,7 @@ import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.AuthenticationModel;
 import net.juligames.tresor.model.ConfigModel;
-import net.juligames.tresor.rest.Authentication;
-import net.juligames.tresor.rest.RESTCaller;
+import net.juligames.tresor.rest.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -89,16 +89,36 @@ public class AuthenticationController {
 
             AuthenticationModel authenticationModel = getOrOverrideAuthenticationModel(host);
 
-            String jwt = authenticationModel.authenticate(username, password);
+            @NotNull ResponseContainer<JWTResponse> jwt = authenticationModel.authenticate(username, password);
 
-            if (jwt.isBlank()) {
-                return AuthenticationResult.API_ERROR;
-            }
-
-            this.username = username;
-            //TODO
-            this.jwt = jwt;
-            return AuthenticationResult.SUCCESS;
+            return switch (jwt.getResponseType()) {
+                case RESPONSE -> {
+                    JWTResponse jwtResponse = Objects.requireNonNull(jwt.getResponse());
+                    this.jwt = jwtResponse.getJwt();
+                    this.username = jwtResponse.getUsername();
+                    yield AuthenticationResult.SUCCESS;
+                }
+                case UNAUTHORIZED -> {
+                    UnauthorizedResponse unauthorizedResponse = Objects.requireNonNull(jwt.getUnauthorizedResponse());
+                    gui.showError("auth.unauthorized", Map.of("error", unauthorizedResponse.error()));
+                    yield AuthenticationResult.FAILURE;
+                }
+                case DIFFERENT_JSON -> {
+                    String differentJson = Objects.requireNonNull(jwt.getDifferentJson());
+                    log.error("Different JSON: {}", differentJson);
+                    yield AuthenticationResult.API_ERROR;
+                }
+                case UNPROCESSABLE_ENTITY -> {
+                    UnprocessableEntity unprocessableEntity = Objects.requireNonNull(jwt.getUnprocessableEntity());
+                    gui.showError("unprocessable_entity", Map.of(
+                            "msg", unprocessableEntity.msg(),
+                            "ctx", unprocessableEntity.ctx(),
+                            "loc", unprocessableEntity.loc(),
+                            "type", unprocessableEntity.type()
+                    ));
+                    yield AuthenticationResult.FAILURE;
+                }
+            };
         } catch (Exception e) {
             log.error("Error during authentication", e);
             return AuthenticationResult.API_ERROR;

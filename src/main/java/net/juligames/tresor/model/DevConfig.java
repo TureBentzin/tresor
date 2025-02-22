@@ -22,7 +22,7 @@ public class DevConfig implements ConfigModel {
 
     @Override
     public @NotNull String defaultServer() {
-        return "http://befator.befatorinc.de:1234";
+        return "http://85.214.239.211:5005";
     }
 
     @Override

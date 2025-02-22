@@ -56,10 +56,12 @@ public class RESTCaller {
         GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS, TRACE
     }
 
+    @Contract("_, _ -> new")
     public static @NotNull URL createURL(@NotNull String host, @NotNull String path) {
         return createURL(host + path);
     }
 
+    @Contract("_ -> new")
     public static @NotNull URL createURL(@NotNull String urlString) {
         try {
             return URI.create(urlString).toURL();
@@ -76,6 +78,8 @@ public class RESTCaller {
         } else if (response.isUnauthorized()) {
             UnauthorizedResponse unauthorizedResponse = gson.fromJson(response.getResponse(), UnauthorizedResponse.class);
             return ResponseContainer.unauthorized(unauthorizedResponse);
+        } else if (response.getStatusCode() == 422) {
+            return ResponseContainer.unprocessableEntity(gson.fromJson(response.getResponse(), UnprocessableEntity.class));
         } else {
             return ResponseContainer.differentJson(response.getResponse());
         }
