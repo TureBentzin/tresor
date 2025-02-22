@@ -6,9 +6,7 @@ import com.googlecode.lanterna.gui2.*;
 import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.controller.AuthenticationController;
-import net.juligames.tresor.model.ConfigModel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,25 +15,24 @@ import java.util.regex.Pattern;
 
 /**
  * @author Ture Bentzin
- * @since 19-02-2025
+ * @since 22-02-2025
  */
-public class LoginView {
-
+public class RegisterView {
     private static final @NotNull Logger log = LoggerFactory.getLogger(LoginView.class);
 
-    public static @NotNull Window getLoginWindow(final @NotNull TresorGUI gui) {
-        TresorWindow tresorWindow = new TresorWindow(gui, "window.login", false);
+    public static @NotNull Window getRegisterWindow(final @NotNull TresorGUI gui) {
+        TresorWindow tresorWindow = new TresorWindow(gui, "window.register", false);
         tresorWindow.setHints(Set.of(Window.Hint.CENTERED, Window.Hint.MENU_POPUP));
 
         // Add components to the window
-        tresorWindow.getContentPanel().addComponent(gui.getTextAsLabel("window.login.content", false));
-        tresorWindow.getContentPanel().addComponent(getLoginPane(gui));
+        tresorWindow.getContentPanel().addComponent(gui.getTextAsLabel("window.register.content", false));
+        tresorWindow.getContentPanel().addComponent(getRegisterPane(gui, tresorWindow));
         return tresorWindow;
     }
 
-    public static @NotNull Container getLoginPane(@NotNull TresorGUI gui) {
+    public static @NotNull Container getRegisterPane(@NotNull TresorGUI gui, @NotNull Window window) {
 
-        //server, username, password, login button
+        //server, username, password, register button
         Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
 
 
@@ -43,39 +40,34 @@ public class LoginView {
 
 
         TextBox serverTextBox = new TextBox(inputSize);
-        panel.addComponent(gui.getTextAsLabel("window.login.server", false));
+        panel.addComponent(gui.getTextAsLabel("window.register.server", false));
         serverTextBox.setValidationPattern(Pattern.compile("^(http|https)://.*$"));
         serverTextBox.setText(Tresor.getConfig().defaultServer());
 
         panel.addComponent(serverTextBox);
 
         TextBox usernameTextBox = new TextBox(inputSize);
-        panel.addComponent(gui.getTextAsLabel("window.login.username", false));
+        panel.addComponent(gui.getTextAsLabel("window.register.username", false));
         panel.addComponent(usernameTextBox);
 
         TextBox passwordTextBox = new TextBox(inputSize);
-        panel.addComponent(gui.getTextAsLabel("window.login.password", false));
+        panel.addComponent(gui.getTextAsLabel("window.register.password", false));
         panel.addComponent(passwordTextBox);
         passwordTextBox.setMask('*');
 
-        Button loginButton = new Button(gui.getText("window.login.button", false), () -> {
-            log.debug("Login button pressed: Server: {}, Username: {}, Password: {}",
-                    serverTextBox.getText(),
-                    usernameTextBox.getText(),
-                    passwordTextBox.getText()
-            );
-            AuthenticationController.AuthenticationResult result;
+        Button registerButton = new Button(gui.getText("window.register.button", false), () -> {
+            AuthenticationController.RegistrationResult result;
             int maxTries = 7; // just avoid spamming the server
             do {
-                result = gui.getAuthenticationController().authenticate(serverTextBox.getText(), usernameTextBox.getText(), passwordTextBox.getText());
+                result = gui.getAuthenticationController().register(serverTextBox.getText(), usernameTextBox.getText(), passwordTextBox.getText());
             } while (switch (result) {
                 case SUCCESS:
-                    gui.switchWindow(DashboardView.getDashboardWindow(gui));
+                    window.close();
                     yield false;
-                case USER_NOT_FOUND:
-                    yield gui.showError("auth.user_not_found");
+                case USER_ALREADY_EXISTS:
+                    yield gui.showError("auth.user_already_exists");
                 case FAILURE:
-                    yield true;
+                    yield false;
                 case NOT_ALLOWED:
                     yield gui.showError("auth.not_allowed");
                 case API_ERROR:
@@ -84,15 +76,13 @@ public class LoginView {
         });
 
         panel.addComponent(new EmptySpace(inputSize));
-        panel.addComponent(loginButton);
+        panel.addComponent(registerButton);
 
-        return panel.withBorder(Borders.singleLine(gui.getText("window.login.title", false)));
+        return panel.withBorder(Borders.singleLine(gui.getText("window.register.title", false)));
     }
 
 
-    private LoginView() {
+    private RegisterView() {
         throw new IllegalStateException("Utility class");
     }
-
-
 }

@@ -26,6 +26,14 @@
       "password": "Password: ",
       "button": "Login"
     },
+    "register": {
+      "title": "Register",
+      "content": "Please enter your credentials:",
+      "server": "Server: ",
+      "username": "Username: ",
+      "password": "Password: ",
+      "button": "Register"
+    },
     "settings": {
       "title": "Settings",
       "language": {
@@ -82,6 +90,9 @@
       },
       "login": {
         "title": "Login"
+      },
+      "register": {
+        "title": "Register"
       }
     },
     "about": {
