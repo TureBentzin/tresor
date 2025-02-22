@@ -1,10 +1,9 @@
 package net.juligames.tresor.rest;
 
 import com.google.gson.Gson;
-import org.jetbrains.annotations.Blocking;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,11 +15,36 @@ import java.net.URI;
 import java.net.URL;
 
 /**
+ * The RESTCaller class provides static methods for sending RESTful HTTP requests.
+ *
+ * <p><b>Features:</b></p>
+ * <ul>
+ *   <li><b>URL Creation:</b> Methods {@code createURL(String)} and {@code createURL(String, String)}
+ *       generate URL objects from string data.</li>
+ *   <li><b>HTTP Requests:</b> Supports various HTTP methods (GET, POST, PUT, DELETE, PATCH, HEAD,
+ *       OPTIONS, TRACE) using the {@code Method} enum.</li>
+ *   <li><b>Authentication:</b> Optionally accepts a JSON Web Token (JWT) for authentication.</li>
+ *   <li><b>Request Handling:</b> For methods that include a request body (POST, PUT, PATCH), the
+ *       request body is transmitted as a JSON string. Conversion between Java objects and JSON is
+ *       handled via Gson.</li>
+ *   <li><b>Response Processing:</b> The response is read and, depending on the HTTP status code,
+ *       either converted into the desired object or returned as an error/unauthorized response
+ *       encapsulated within a {@code ResponseContainer}.</li>
+ * </ul>
+ *
+ * <p><b>Usage Example:</b></p>
+ * <pre>
+ *     URL url = RESTCaller.createURL("http://example.com", "/api/data");
+ *     ResponseContainer&lt;MyResponse&gt; response = RESTCaller.call(url, "myJWT", RESTCaller.Method.GET, MyResponse.class);
+ * </pre>
+ *
  * @author Ture Bentzin
  * @since 21-02-2025
  */
 @SuppressWarnings("UnusedReturnValue")
 public class RESTCaller {
+
+    private static final Logger log = LoggerFactory.getLogger(RESTCaller.class);
 
     private RESTCaller() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
@@ -44,14 +68,29 @@ public class RESTCaller {
         }
     }
 
+    private static @NotNull <R> ResponseContainer<R> handleResponse(@NotNull RawResponse response, @NotNull Class<R> responseClass) {
+        log.debug("Response JSON: {}", response.getResponse());
+        if (response.isSuccessful()) {
+            R responseObj = gson.fromJson(response.getResponse(), responseClass);
+            return ResponseContainer.successful(responseObj);
+        } else if (response.isUnauthorized()) {
+            UnauthorizedResponse unauthorizedResponse = gson.fromJson(response.getResponse(), UnauthorizedResponse.class);
+            return ResponseContainer.unauthorized(unauthorizedResponse);
+        } else {
+            return ResponseContainer.differentJson(response.getResponse());
+        }
+    }
 
+
+    @ApiStatus.Internal
     @Blocking
-    public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method) {
+    public static @NotNull RawResponse call(@NotNull URL url, @Nullable String jwt, @NotNull Method method) {
         return call(url, jwt, method, (String) null);
     }
 
+    @ApiStatus.Internal
     @Blocking
-    public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @Nullable String body) {
+    public static @NotNull RawResponse call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @Nullable String body) {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
@@ -96,7 +135,8 @@ public class RESTCaller {
             while ((line = reader.readLine()) != null) {
                 response.append(line);
             }
-            return response.toString();
+
+            return new RawResponse(response.toString(), responseCode);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -104,35 +144,36 @@ public class RESTCaller {
         }
     }
 
+
     @Blocking
-    public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull Object body) {
-        return call(url, jwt, method, gson.toJson(body));
+    public static @NotNull <R, T> ResponseContainer<R> call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull T body, @NotNull Class<R> responseClass) {
+        String json = gson.toJson(body);
+        log.debug("Request JSON (BODY): {}", json);
+        RawResponse response = call(url, jwt, method, json);
+        return handleResponse(response, responseClass);
+    }
+
+
+    @Blocking
+    public static @NotNull <R> ResponseContainer<R> call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull Class<R> responseClass) {
+        RawResponse response = call(url, jwt, method);
+        return handleResponse(response, responseClass);
     }
 
     @Blocking
-    public static @NotNull <R, T> R call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull T body, @NotNull Class<R> responseClass) {
-        return gson.fromJson(call(url, jwt, method, body), responseClass);
+    public static @NotNull <R> ResponseContainer<R> callPublic(@NotNull URL url, @NotNull Method method, @NotNull Class<R> responseClass) {
+        return call(url, null, method, responseClass);
     }
 
     @Blocking
-    public static @NotNull <R> R call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull Class<R> responseClass) {
-        return gson.fromJson(call(url, jwt, method), responseClass);
-    }
-
-    @Blocking
-    public static @NotNull <R> R callPublic(@NotNull URL url, @NotNull Method method, @NotNull Class<R> responseClass) {
-        return gson.fromJson(call(url, null, method), responseClass);
-    }
-
-    @Blocking
-    public static @NotNull <R> R callPublic(@NotNull URL url, @NotNull Method method, @NotNull Object body, @NotNull Class<R> responseClass) {
-        return gson.fromJson(call(url, null, method, body), responseClass);
+    public static @NotNull <R> ResponseContainer<R> callPublic(@NotNull URL url, @NotNull Method method, @NotNull Object body, @NotNull Class<R> responseClass) {
+        return call(url, null, method, body, responseClass);
     }
 
     @TestOnly
     @Blocking
-    public static @NotNull String get(@NotNull URL url) {
-        return call(url, null, Method.GET);
+    public static @NotNull <R> ResponseContainer<R> get(@NotNull URL url, @NotNull Class<R> responseClass) {
+        return callPublic(url, Method.GET, responseClass);
     }
 
 }

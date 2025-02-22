@@ -163,7 +163,7 @@ public class AuthenticationController {
     private @NotNull AuthenticationModel getOrOverrideAuthenticationModel(@NotNull String host) {
         if (authenticationModel == null || !host.equals(this.host)) {
             this.host = host;
-            authenticationModel = new AuthenticationModel();
+            authenticationModel = new AuthenticationModel(host);
         }
         return authenticationModel;
     }

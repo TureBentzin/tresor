@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assumptions.*;
 public class RestCallerTest {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(RestCallerTest.class);
+    public static final @NotNull String RESPONSE_ELEMENT_BODY = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto";
+    public static final @NotNull String RESPONSE_ELEMENT_TITLE = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
 
 
     public record ExampleResponse(int userId, int id, String title, String body) {
@@ -55,16 +57,20 @@ public class RestCallerTest {
         String urlString = "https://jsonplaceholder.typicode.com/posts/1";
         URL url = URI.create(urlString).toURL();
         log.info("URL: {}", url);
-        String response = RESTCaller.call(url, null, RESTCaller.Method.GET, "");
+        @NotNull ResponseContainer<ExampleResponse> response = RESTCaller.call(url, null, RESTCaller.Method.GET, "", ExampleResponse.class);
         log.info("Response: {}", response);
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        ExampleResponse exampleResponse = gson.fromJson(response, ExampleResponse.class);
-        assertNotNull(exampleResponse);
-        assertEquals(1, exampleResponse.userId());
-        assertEquals(1, exampleResponse.id());
-        assertEquals("sunt aut facere repellat provident occaecati excepturi optio reprehenderit", exampleResponse.title());
-        assertEquals("quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto", exampleResponse.body());
+
+        if (response.isSuccessful()) {
+            ExampleResponse exampleResponse = response.getResponse();
+            assertNotNull(exampleResponse);
+            assertEquals(1, exampleResponse.userId());
+            assertEquals(1, exampleResponse.id());
+            assertEquals(RESPONSE_ELEMENT_TITLE, exampleResponse.title());
+            assertEquals(RESPONSE_ELEMENT_BODY, exampleResponse.body());
+        } else {
+            fail("Response was not successful");
+        }
     }
 
     @Test
@@ -73,16 +79,20 @@ public class RestCallerTest {
         URL url = URI.create(urlString).toURL();
         log.info("URL: {}", url);
         ExampleRequest exampleRequest = new ExampleRequest("foo", "bar", 1);
-        String response = RESTCaller.call(url, null, RESTCaller.Method.POST, gson.toJson(exampleRequest));
+        ResponseContainer<ExampleResponse> response = RESTCaller.call(url, null, RESTCaller.Method.POST, exampleRequest, ExampleResponse.class);
         log.info("Response: {}", response);
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        ExampleResponse exampleResponse = gson.fromJson(response, ExampleResponse.class);
-        assertNotNull(exampleResponse);
-        assertEquals(1, exampleResponse.userId());
-        assertEquals(101, exampleResponse.id());
-        assertEquals("foo", exampleResponse.title());
-        assertEquals("bar", exampleResponse.body());
+
+        if (response.isSuccessful()) {
+            ExampleResponse exampleResponse = response.getResponse();
+            assertNotNull(exampleResponse);
+            assertEquals(1, exampleResponse.userId());
+            assertEquals(101, exampleResponse.id());
+            assertEquals("foo", exampleResponse.title());
+            assertEquals("bar", exampleResponse.body());
+        } else {
+            fail("Response was not successful");
+        }
     }
 
     @Test
@@ -91,16 +101,22 @@ public class RestCallerTest {
         URL url = URI.create(urlString).toURL();
         log.info("URL: {}", url);
         ExampleRequest exampleRequest = new ExampleRequest("foo", "bar", 1);
-        String response = RESTCaller.call(url, null, RESTCaller.Method.PUT, gson.toJson(exampleRequest));
+
+        ResponseContainer<ExampleResponse> response = RESTCaller.call(url, null, RESTCaller.Method.PUT, exampleRequest, ExampleResponse.class);
+
         log.info("Response: {}", response);
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        ExampleResponse exampleResponse = gson.fromJson(response, ExampleResponse.class);
-        assertNotNull(exampleResponse);
-        assertEquals(1, exampleResponse.userId());
-        assertEquals(1, exampleResponse.id());
-        assertEquals("foo", exampleResponse.title());
-        assertEquals("bar", exampleResponse.body());
+
+        if (response.isSuccessful()) {
+            ExampleResponse exampleResponse = response.getResponse();
+            assertNotNull(exampleResponse);
+            assertEquals(1, exampleResponse.userId());
+            assertEquals(1, exampleResponse.id());
+            assertEquals("foo", exampleResponse.title());
+            assertEquals("bar", exampleResponse.body());
+        } else {
+            fail("Response was not successful");
+        }
     }
 
     @Test
@@ -108,10 +124,13 @@ public class RestCallerTest {
         String urlString = "https://jsonplaceholder.typicode.com/posts/1";
         URL url = URI.create(urlString).toURL();
         log.info("URL: {}", url);
-        String response = RESTCaller.call(url, null, RESTCaller.Method.DELETE, "");
+
+        ResponseContainer<EmptyBody> response = RESTCaller.call(url, null, RESTCaller.Method.DELETE, "", EmptyBody.class);
         log.info("Response: {}", response);
         assertNotNull(response);
-        assertEquals("{}", response);
+        assertTrue(response.isSuccessful());
+
+
     }
 
     @Test
@@ -119,31 +138,20 @@ public class RestCallerTest {
         String urlString = "https://jsonplaceholder.typicode.com/posts/1";
         URL url = URI.create(urlString).toURL();
         log.info("URL: {}", url);
-        String response = RESTCaller.call(url, "eyJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6IlRlc3RpbmcifQ.GSUxiQ-EYtewCn6270V1-F1DWTF0Orfg2-S3Dt9S3xA", RESTCaller.Method.GET, "");
+
+        ResponseContainer<ExampleResponse> response = RESTCaller.call(url, null, RESTCaller.Method.GET, "", ExampleResponse.class);
         log.info("Response: {}", response);
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        ExampleResponse exampleResponse = gson.fromJson(response, ExampleResponse.class);
-        assertNotNull(exampleResponse);
-        assertEquals(1, exampleResponse.userId());
-        assertEquals(1, exampleResponse.id());
 
-        assertEquals("sunt aut facere repellat provident occaecati excepturi optio reprehenderit", exampleResponse.title());
-        assertEquals("quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto", exampleResponse.body());
-    }
-
-    //other paths
-
-    @Test
-    void getWithGson() throws MalformedURLException {
-        String urlString = "https://jsonplaceholder.typicode.com/posts/1";
-        URL url = URI.create(urlString).toURL();
-
-        ExampleResponse exampleResponse = RESTCaller.call(url, null, RESTCaller.Method.GET, ExampleResponse.class);
-        assertNotNull(exampleResponse);
-        assertEquals(1, exampleResponse.userId());
-        assertEquals(1, exampleResponse.id());
-        assertEquals("sunt aut facere repellat provident occaecati excepturi optio reprehenderit", exampleResponse.title());
-        assertEquals("quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto", exampleResponse.body());
+        if (response.isSuccessful()) {
+            ExampleResponse exampleResponse = response.getResponse();
+            assertNotNull(exampleResponse);
+            assertEquals(1, exampleResponse.userId());
+            assertEquals(1, exampleResponse.id());
+            assertEquals(RESPONSE_ELEMENT_TITLE, exampleResponse.title());
+            assertEquals(RESPONSE_ELEMENT_BODY, exampleResponse.body());
+        } else {
+            fail("Response was not successful");
+        }
     }
 }

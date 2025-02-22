@@ -23,6 +23,6 @@ public class AuthenticationModel {
     }
 
     public @NotNull String authenticate(@NotNull String username, @NotNull String password) {
-        return callPublic(createURL(host, "/authenticate"), Method.POST, new Authentication(username, password), String.class);
+        return ""; //TODO
     }
 }

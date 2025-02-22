@@ -1,5 +1,6 @@
 package net.juligames.tresor.rest;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +11,23 @@ import org.jetbrains.annotations.Nullable;
 public class ResponseContainer<T> {
 
     /* This class contains either a response or an error */
+
+
+    @Contract("_ -> new")
+    public static @NotNull <T> ResponseContainer<T> successful(@NotNull T response) {
+        return new ResponseContainer<>(response, null, null);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull <T> ResponseContainer<T> unauthorized(@NotNull UnauthorizedResponse unauthorizedResponse) {
+        return new ResponseContainer<>(null, unauthorizedResponse, null);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull <T> ResponseContainer<T> differentJson(@NotNull String differentJson) {
+        return new ResponseContainer<>(null, null, differentJson);
+    }
+
 
     public enum ResponseType {
         RESPONSE,
@@ -60,6 +78,15 @@ public class ResponseContainer<T> {
 
     public @NotNull ResponseType getResponseType() {
         return responseType;
+    }
+
+    public boolean isSuccessful() {
+        return responseType == ResponseType.RESPONSE;
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "{" + responseType + ": " + (response != null ? response : unauthorizedResponse != null ? unauthorizedResponse : differentJson) + "}";
     }
 }
 
