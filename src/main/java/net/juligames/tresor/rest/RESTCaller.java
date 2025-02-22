@@ -1,4 +1,4 @@
-package net.juligames.tresor.controller;
+package net.juligames.tresor.rest;
 
 import com.google.gson.Gson;
 import org.jetbrains.annotations.Blocking;

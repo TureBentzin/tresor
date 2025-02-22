@@ -5,6 +5,7 @@ import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.ConfigModel;
 import net.juligames.tresor.rest.Authentication;
+import net.juligames.tresor.rest.RESTCaller;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
