@@ -3,6 +3,7 @@ package net.juligames.tresor.controller;
 
 import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
+import net.juligames.tresor.model.AuthenticationModel;
 import net.juligames.tresor.model.ConfigModel;
 import net.juligames.tresor.rest.Authentication;
 import net.juligames.tresor.rest.RESTCaller;
@@ -10,6 +11,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -24,10 +27,16 @@ import java.util.Optional;
 @SuppressWarnings("ClassEscapesDefinedScope") //intended behaviour
 public class AuthenticationController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
     private final @NotNull TresorGUI gui;
 
     private @Nullable String username = null;
     private @Nullable String jwt = null;
+    private @Nullable String host = null;
+
+    /// MODELS ///
+
+    private @Nullable AuthenticationModel authenticationModel = null;
 
     public AuthenticationController(@NotNull TresorGUI gui) {
         this.gui = gui;
@@ -49,41 +58,82 @@ public class AuthenticationController {
         API_ERROR
     }
 
+    public enum RegistrationResult {
+        SUCCESS,
+        USER_ALREADY_EXISTS,
+        FAILURE,
+        NOT_ALLOWED,
+        API_ERROR
+    }
+
     @Blocking
     public @NotNull AuthenticationResult authenticate(@NotNull String host, @NotNull String username, @NotNull String password) {
-        final ConfigModel config = Tresor.getConfig();
-
-        if (config.getServerBlacklistRegex().stream().anyMatch(host::matches)) {
-            return AuthenticationResult.NOT_ALLOWED;
-        }
-
-        if (!config.getServerWhitelistRegex().isEmpty() && config.getServerWhitelistRegex().stream().noneMatch(host::matches)) {
-            return AuthenticationResult.NOT_ALLOWED;
-        }
-
-        if (username.isEmpty()) {
-            return AuthenticationResult.USER_NOT_FOUND;
-        }
-
-        if (password.isEmpty()) {
-            return AuthenticationResult.FAILURE;
-        }
-
-        URL url;
         try {
+            final ConfigModel config = Tresor.getConfig();
 
-            URI uri = URI.create(host + "/api/v1/auth/login");
-            url = uri.toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            if (config.getServerBlacklistRegex().stream().anyMatch(host::matches)) {
+                return AuthenticationResult.NOT_ALLOWED;
+            }
+
+            if (!config.getServerWhitelistRegex().isEmpty() && config.getServerWhitelistRegex().stream().noneMatch(host::matches)) {
+                return AuthenticationResult.NOT_ALLOWED;
+            }
+
+            if (username.isEmpty()) {
+                return AuthenticationResult.USER_NOT_FOUND;
+            }
+
+            if (password.isEmpty()) {
+                return AuthenticationResult.FAILURE;
+            }
+
+            AuthenticationModel authenticationModel = getOrOverrideAuthenticationModel(host);
+
+            String jwt = authenticationModel.authenticate(username, password);
+
+            if (jwt.isBlank()) {
+                return AuthenticationResult.API_ERROR;
+            }
+
+            this.username = username;
+            //TODO
+            this.jwt = jwt;
+            return AuthenticationResult.SUCCESS;
+        } catch (Exception e) {
+            log.error("Error during authentication", e);
+            return AuthenticationResult.API_ERROR;
         }
+    }
 
-        RESTCaller.call(url, null, RESTCaller.Method.POST, new Authentication(username, password));
+    @Blocking
+    public @NotNull RegistrationResult register(@NotNull String host, @NotNull String username, @NotNull String password) {
+        try {
+            final ConfigModel config = Tresor.getConfig();
+            if (config.getServerBlacklistRegex().stream().anyMatch(host::matches)) {
+                return RegistrationResult.NOT_ALLOWED;
+            }
 
-        this.username = username;
-        //TODO
-        this.jwt = "jwt";
-        return AuthenticationResult.SUCCESS;
+            if (!config.getServerWhitelistRegex().isEmpty() && config.getServerWhitelistRegex().stream().noneMatch(host::matches)) {
+                return RegistrationResult.NOT_ALLOWED;
+            }
+
+            if (username.isEmpty()) {
+                return RegistrationResult.FAILURE;
+            }
+
+            if (password.isEmpty()) {
+                return RegistrationResult.FAILURE;
+            }
+
+            AuthenticationModel authenticationModel = getOrOverrideAuthenticationModel(host);
+
+
+            //TODO
+            return RegistrationResult.SUCCESS;
+        } catch (Exception e) {
+            log.error("Error during registration", e);
+            return RegistrationResult.API_ERROR;
+        }
     }
 
 
@@ -96,10 +146,26 @@ public class AuthenticationController {
         return Optional.ofNullable(username);
     }
 
+    public @NotNull Optional<String> getHost() {
+        return Optional.ofNullable(host);
+    }
+
+    private @NotNull AuthenticationModel getAuthenticationModel() {
+        return Objects.requireNonNull(authenticationModel, "AuthenticationModel not yet initialized");
+    }
+
     @ApiStatus.Internal
     public void logout() {
         username = null;
         jwt = null;
+    }
+
+    private @NotNull AuthenticationModel getOrOverrideAuthenticationModel(@NotNull String host) {
+        if (authenticationModel == null || !host.equals(this.host)) {
+            this.host = host;
+            authenticationModel = new AuthenticationModel();
+        }
+        return authenticationModel;
     }
 
     public boolean isAuthenticated() {

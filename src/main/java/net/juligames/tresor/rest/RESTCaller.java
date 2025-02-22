@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -30,6 +31,19 @@ public class RESTCaller {
     public enum Method {
         GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS, TRACE
     }
+
+    public static @NotNull URL createURL(@NotNull String host, @NotNull String path) {
+        return createURL(host + path);
+    }
+
+    public static @NotNull URL createURL(@NotNull String urlString) {
+        try {
+            return URI.create(urlString).toURL();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Blocking
     public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method) {
