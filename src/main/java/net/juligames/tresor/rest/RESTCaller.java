@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +32,12 @@ public class RESTCaller {
     }
 
     @Blocking
-    public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull String body) {
+    public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method) {
+        return call(url, jwt, method, (String) null);
+    }
+
+    @Blocking
+    public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @Nullable String body) {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
@@ -48,6 +54,7 @@ public class RESTCaller {
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Accept", "application/json");
 
+        if (body == null) body = "";
         if (method == Method.POST || method == Method.PUT || method == Method.PATCH) { //these have bodies
             connection.setDoOutput(true);
             try (OutputStream os = connection.getOutputStream()) {
@@ -87,4 +94,31 @@ public class RESTCaller {
     public static @NotNull String call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull Object body) {
         return call(url, jwt, method, gson.toJson(body));
     }
+
+    @Blocking
+    public static @NotNull <R, T> R call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull T body, @NotNull Class<R> responseClass) {
+        return gson.fromJson(call(url, jwt, method, body), responseClass);
+    }
+
+    @Blocking
+    public static @NotNull <R> R call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull Class<R> responseClass) {
+        return gson.fromJson(call(url, jwt, method), responseClass);
+    }
+
+    @Blocking
+    public static @NotNull <R> R callPublic(@NotNull URL url, @NotNull Method method, @NotNull Class<R> responseClass) {
+        return gson.fromJson(call(url, null, method), responseClass);
+    }
+
+    @Blocking
+    public static @NotNull <R> R callPublic(@NotNull URL url, @NotNull Method method, @NotNull Object body, @NotNull Class<R> responseClass) {
+        return gson.fromJson(call(url, null, method, body), responseClass);
+    }
+
+    @TestOnly
+    @Blocking
+    public static @NotNull String get(@NotNull URL url) {
+        return call(url, null, Method.GET);
+    }
+
 }
