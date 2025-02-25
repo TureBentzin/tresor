@@ -16,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+
+import static net.juligames.tresor.rest.ServersideProcessingError.handleErrors;
 
 /**
  * @author Ture Bentzin
@@ -102,13 +105,7 @@ public class AuthenticationController {
                 }
                 case DIFFERENT_JSON -> AuthenticationResult.API_ERROR;
                 case UNPROCESSABLE_ENTITY -> {
-                    UnprocessableEntity unprocessableEntity = Objects.requireNonNull(jwt.getUnprocessableEntity());
-                    gui.showError("unprocessable_entity", Map.of(
-                            "msg", unprocessableEntity.msg(),
-                            "ctx", unprocessableEntity.ctx(),
-                            "loc", unprocessableEntity.loc(),
-                            "type", unprocessableEntity.type()
-                    ));
+                    handleErrors(gui, Objects.requireNonNull(jwt.getUnprocessableEntity()));
                     yield AuthenticationResult.FAILURE;
                 }
             };
@@ -155,13 +152,7 @@ public class AuthenticationController {
                 }
                 case DIFFERENT_JSON -> RegistrationResult.API_ERROR;
                 case UNPROCESSABLE_ENTITY -> {
-                    UnprocessableEntity unprocessableEntity = Objects.requireNonNull(register.getUnprocessableEntity());
-                    gui.showError("unprocessable_entity", Map.of(
-                            "msg", unprocessableEntity.msg(),
-                            "ctx", unprocessableEntity.ctx(),
-                            "loc", unprocessableEntity.loc(),
-                            "type", unprocessableEntity.type()
-                    ));
+                    handleErrors(gui, Objects.requireNonNull(register.getUnprocessableEntity()));
                     yield RegistrationResult.FAILURE;
                 }
             };

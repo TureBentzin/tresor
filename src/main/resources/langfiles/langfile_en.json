@@ -77,15 +77,21 @@
         "error": "Error while authenticating: {error}"
       },
       "register": {
-        "success": "Registration successful! You can now login.",
         "error": "Error while registering: {error}"
       },
       "unprocessable_entity": "Error for {loc}: {msg}",
       "validations": {
         "not_authed": "You are not authenticated! Please login first."
       }
+    },
+    "popup": {
+      "title": "Information",
+      "register": {
+        "success": "Registration successful! You can now login."
+      }
     }
   },
+
   "menu": {
     "home": {
       "title": "Home",

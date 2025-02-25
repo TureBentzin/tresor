@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 /**
  * @author Ture Bentzin
  * @since 22-02-2025
@@ -29,7 +31,7 @@ public class ResponseContainer<T> {
     }
 
     @Contract("_ -> new")
-    public static @NotNull <T> ResponseContainer<T> unprocessableEntity(@NotNull UnprocessableEntity unprocessableEntity) {
+    public static @NotNull <T> ResponseContainer<T> unprocessableEntity(@NotNull Set<ServersideProcessingError> unprocessableEntity) {
         return new ResponseContainer<>(null, null, null, unprocessableEntity);
     }
 
@@ -47,13 +49,12 @@ public class ResponseContainer<T> {
 
     private final @Nullable String differentJson;
 
-    private final @Nullable UnprocessableEntity unprocessableEntity;
+    private final @Nullable Set<ServersideProcessingError> unprocessableEntity;
 
     private final @NotNull ResponseType responseType;
 
 
-    @SuppressWarnings("ConstantValue")
-    private ResponseContainer(@Nullable T response, @Nullable GenericError error, @Nullable String differentJson, @Nullable UnprocessableEntity unprocessableEntity) {
+    private ResponseContainer(@Nullable T response, @Nullable GenericError error, @Nullable String differentJson, @Nullable Set<ServersideProcessingError> unprocessableEntity) {
 
 
         if (response != null) {
@@ -102,7 +103,10 @@ public class ResponseContainer<T> {
         return response;
     }
 
-    public @Nullable UnprocessableEntity getUnprocessableEntity() {
+    /**
+     * @return the serverside processing errors, if any
+     */
+    public @Nullable Set<ServersideProcessingError> getUnprocessableEntity() {
         return unprocessableEntity;
     }
 

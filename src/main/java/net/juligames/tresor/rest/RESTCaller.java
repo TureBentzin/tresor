@@ -1,6 +1,7 @@
 package net.juligames.tresor.rest;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
 
 /**
  * The RESTCaller class provides static methods for sending RESTful HTTP requests.
@@ -79,7 +81,8 @@ public class RESTCaller {
             GenericError genericError = gson.fromJson(response.getResponse(), GenericError.class);
             return ResponseContainer.failure(genericError);
         } else if (response.getStatusCode() == 422) {
-            return ResponseContainer.unprocessableEntity(gson.fromJson(response.getResponse(), UnprocessableEntity.class));
+            return ResponseContainer.unprocessableEntity(gson.fromJson(response.getResponse(), new TypeToken<List<ServersideProcessingError>>() {
+            }.getType()));
         } else {
             log.warn("Received JSON of unexpected schema: {}", response.getResponse());
             return ResponseContainer.differentJson(response.getResponse());
