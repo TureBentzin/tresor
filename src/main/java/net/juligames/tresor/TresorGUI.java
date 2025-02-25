@@ -187,6 +187,16 @@ public final class TresorGUI {
         };
     }
 
+
+    public void showInfo(@NotNull String infoKey, @NotNull Map<String, String> params) {
+        final String title = getText("window.popup.title", false);
+        final String message = getTextWithParams("window.popup." + infoKey, false, params);
+        new MessageDialogBuilder().setTitle(title)
+                .setText(message)
+                .addButton(MessageDialogButton.Close)
+                .build().showDialog(getGui());
+    }
+
     public @NotNull BankingController getBankingController() {
         return bankingController;
     }
@@ -267,4 +277,5 @@ public final class TresorGUI {
             throw new RuntimeException(e);
         }
     }
+
 }

@@ -1,6 +1,8 @@
 package net.juligames.tresor.rest;
 
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Ture Bentzin
  * @since 21-02-2025
@@ -15,7 +17,7 @@ public record GenericError(String error, int status) {
         }
     }
 
-    public GenericError(String error) {
+    public GenericError(@NotNull String error) {
         this(error, 500);
     }
 }

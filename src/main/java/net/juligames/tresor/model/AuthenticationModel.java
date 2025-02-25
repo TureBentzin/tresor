@@ -2,6 +2,7 @@ package net.juligames.tresor.model;
 
 
 import net.juligames.tresor.rest.Authentication;
+import net.juligames.tresor.rest.GenericSuccess;
 import net.juligames.tresor.rest.JWTResponse;
 import net.juligames.tresor.rest.ResponseContainer;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,15 @@ public class AuthenticationModel {
 
         //call REST API
         return callPublic(url, Method.POST, authentication, JWTResponse.class);
+    }
+
+
+    public @NotNull ResponseContainer<GenericSuccess> register(@NotNull String username, @NotNull String password) {
+        final URL url = createURL(host, "/api/v1/auth/register");
+        final Authentication authentication = new Authentication(username, password);
+
+        //call REST API
+        return callPublic(url, Method.POST, authentication, GenericSuccess.class);
     }
 
 }

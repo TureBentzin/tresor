@@ -74,7 +74,11 @@
         "failure": "Authentication failed! Please check your credentials.",
         "not_allowed": "Authentication was denied by tresor",
         "api_error": "An error occurred while trying to authenticate! You can attempt to try again.",
-        "unauthorized": "{error}"
+        "error": "Error while authenticating: {error}"
+      },
+      "register": {
+        "success": "Registration successful! You can now login.",
+        "error": "Error while registering: {error}"
       },
       "unprocessable_entity": "Error for {loc}: {msg}",
       "validations": {

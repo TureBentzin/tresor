@@ -19,8 +19,8 @@ public class ResponseContainer<T> {
     }
 
     @Contract("_ -> new")
-    public static @NotNull <T> ResponseContainer<T> unauthorized(@NotNull UnauthorizedResponse unauthorizedResponse) {
-        return new ResponseContainer<>(null, unauthorizedResponse, null, null);
+    public static @NotNull <T> ResponseContainer<T> failure(@NotNull GenericError genericError) {
+        return new ResponseContainer<>(null, genericError, null, null);
     }
 
     @Contract("_ -> new")
@@ -36,14 +36,14 @@ public class ResponseContainer<T> {
 
     public enum ResponseType {
         RESPONSE,
-        UNAUTHORIZED,
+        ERROR,
         UNPROCESSABLE_ENTITY,
         DIFFERENT_JSON,
     }
 
     private final @Nullable T response;
 
-    private final @Nullable UnauthorizedResponse unauthorizedResponse;
+    private final @Nullable GenericError error;
 
     private final @Nullable String differentJson;
 
@@ -53,21 +53,20 @@ public class ResponseContainer<T> {
 
 
     @SuppressWarnings("ConstantValue")
-    private ResponseContainer(@Nullable T response, @Nullable UnauthorizedResponse unauthorizedResponse, @Nullable String differentJson, @Nullable UnprocessableEntity unprocessableEntity) {
+    private ResponseContainer(@Nullable T response, @Nullable GenericError error, @Nullable String differentJson, @Nullable UnprocessableEntity unprocessableEntity) {
 
 
         if (response != null) {
             responseType = ResponseType.RESPONSE;
             this.response = response;
 
-            this.unauthorizedResponse = null;
+            this.error = null;
             this.differentJson = null;
             this.unprocessableEntity = null;
 
-        } else if (unauthorizedResponse != null) {
-            responseType = ResponseType.UNAUTHORIZED;
-            this.unauthorizedResponse = unauthorizedResponse;
-
+        } else if (error != null) {
+            responseType = ResponseType.ERROR;
+            this.error = error;
             this.response = null;
             this.differentJson = null;
             this.unprocessableEntity = null;
@@ -77,14 +76,14 @@ public class ResponseContainer<T> {
             this.differentJson = differentJson;
 
             this.response = null;
-            this.unauthorizedResponse = null;
+            this.error = null;
             this.unprocessableEntity = null;
         } else {
             responseType = ResponseType.UNPROCESSABLE_ENTITY;
             this.unprocessableEntity = unprocessableEntity;
 
             this.response = null;
-            this.unauthorizedResponse = null;
+            this.error = null;
             this.differentJson = null;
         }
 
@@ -95,8 +94,8 @@ public class ResponseContainer<T> {
         return differentJson;
     }
 
-    public @Nullable UnauthorizedResponse getUnauthorizedResponse() {
-        return unauthorizedResponse;
+    public @Nullable GenericError getError() {
+        return error;
     }
 
     public @Nullable T getResponse() {
@@ -116,7 +115,7 @@ public class ResponseContainer<T> {
     }
 
     public boolean isUnauthorized() {
-        return responseType == ResponseType.UNAUTHORIZED;
+        return responseType == ResponseType.ERROR;
     }
 
     public boolean isDifferentJson() {
@@ -129,7 +128,7 @@ public class ResponseContainer<T> {
 
     @Override
     public @NotNull String toString() {
-        return "{" + responseType + ": " + (response != null ? response : unauthorizedResponse != null ? unauthorizedResponse : differentJson) + "}";
+        return "{" + responseType + ": " + (response != null ? response : error != null ? error : differentJson) + "}";
     }
 }
 

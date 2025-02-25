@@ -64,14 +64,12 @@ public class RegisterView {
                 case SUCCESS:
                     window.close();
                     yield false;
-                case USER_ALREADY_EXISTS:
-                    yield gui.showError("auth.user_already_exists");
-                case FAILURE:
-                    yield false;
                 case NOT_ALLOWED:
-                    yield gui.showError("auth.not_allowed");
+                    yield gui.showError("register.not_allowed");
                 case API_ERROR:
-                    yield gui.showError("auth.api_error", true);
+                    yield gui.showError("register.api_error", true);
+                default:
+                    yield false;
             } && maxTries-- > 0);
         });
 

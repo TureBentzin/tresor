@@ -75,12 +75,13 @@ public class RESTCaller {
         if (response.isSuccessful()) {
             R responseObj = gson.fromJson(response.getResponse(), responseClass);
             return ResponseContainer.successful(responseObj);
-        } else if (response.isUnauthorized()) {
-            UnauthorizedResponse unauthorizedResponse = gson.fromJson(response.getResponse(), UnauthorizedResponse.class);
-            return ResponseContainer.unauthorized(unauthorizedResponse);
+        } else if (response.isError()) {
+            GenericError genericError = gson.fromJson(response.getResponse(), GenericError.class);
+            return ResponseContainer.failure(genericError);
         } else if (response.getStatusCode() == 422) {
             return ResponseContainer.unprocessableEntity(gson.fromJson(response.getResponse(), UnprocessableEntity.class));
         } else {
+            log.warn("Received JSON of unexpected schema: {}", response.getResponse());
             return ResponseContainer.differentJson(response.getResponse());
         }
     }

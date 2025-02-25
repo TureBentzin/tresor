@@ -26,8 +26,27 @@ public record RawResponse(@NotNull String response, int statusCode) {
         return statusCode >= 200 && statusCode < 300;
     }
 
-    public boolean isUnauthorized() {
-        return statusCode == 401;
+    public boolean isClientError() {
+        return statusCode >= 400 && statusCode < 500;
     }
 
+    public boolean isServerError() {
+        return statusCode >= 500 && statusCode < 600;
+    }
+
+    public boolean isInformational() {
+        return statusCode >= 100 && statusCode < 200;
+    }
+
+    public boolean isRedirection() {
+        return statusCode >= 300 && statusCode < 400;
+    }
+
+    public boolean isError() {
+        return statusCode >= 400;
+    }
+
+    public boolean isOk() {
+        return statusCode == 200;
+    }
 }

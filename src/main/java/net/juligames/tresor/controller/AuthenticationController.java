@@ -13,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -98,16 +95,12 @@ public class AuthenticationController {
                     this.username = jwtResponse.getUsername();
                     yield AuthenticationResult.SUCCESS;
                 }
-                case UNAUTHORIZED -> {
-                    UnauthorizedResponse unauthorizedResponse = Objects.requireNonNull(jwt.getUnauthorizedResponse());
-                    gui.showError("auth.unauthorized", Map.of("error", unauthorizedResponse.error()));
+                case ERROR -> {
+                    GenericError error = Objects.requireNonNull(jwt.getError());
+                    gui.showError("auth.error", Map.of("error", error.error()));
                     yield AuthenticationResult.FAILURE;
                 }
-                case DIFFERENT_JSON -> {
-                    String differentJson = Objects.requireNonNull(jwt.getDifferentJson());
-                    log.error("Different JSON: {}", differentJson);
-                    yield AuthenticationResult.API_ERROR;
-                }
+                case DIFFERENT_JSON -> AuthenticationResult.API_ERROR;
                 case UNPROCESSABLE_ENTITY -> {
                     UnprocessableEntity unprocessableEntity = Objects.requireNonNull(jwt.getUnprocessableEntity());
                     gui.showError("unprocessable_entity", Map.of(
@@ -147,9 +140,31 @@ public class AuthenticationController {
 
             AuthenticationModel authenticationModel = getOrOverrideAuthenticationModel(host);
 
+            @NotNull ResponseContainer<GenericSuccess> register = authenticationModel.register(username, password);
 
-            //TODO
-            return RegistrationResult.SUCCESS;
+            return switch (register.getResponseType()) {
+                case RESPONSE -> {
+                    GenericSuccess genericSuccess = Objects.requireNonNull(register.getResponse());
+                    gui.showInfo("register.success", Map.of("status", String.valueOf(genericSuccess.status())));
+                    yield RegistrationResult.SUCCESS;
+                }
+                case ERROR -> {
+                    GenericError error = Objects.requireNonNull(register.getError());
+                    gui.showError("register.error", Map.of("error", error.error()));
+                    yield RegistrationResult.FAILURE;
+                }
+                case DIFFERENT_JSON -> RegistrationResult.API_ERROR;
+                case UNPROCESSABLE_ENTITY -> {
+                    UnprocessableEntity unprocessableEntity = Objects.requireNonNull(register.getUnprocessableEntity());
+                    gui.showError("unprocessable_entity", Map.of(
+                            "msg", unprocessableEntity.msg(),
+                            "ctx", unprocessableEntity.ctx(),
+                            "loc", unprocessableEntity.loc(),
+                            "type", unprocessableEntity.type()
+                    ));
+                    yield RegistrationResult.FAILURE;
+                }
+            };
         } catch (Exception e) {
             log.error("Error during registration", e);
             return RegistrationResult.API_ERROR;
