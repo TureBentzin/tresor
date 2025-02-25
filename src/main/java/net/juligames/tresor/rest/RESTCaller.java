@@ -77,12 +77,12 @@ public class RESTCaller {
         if (response.isSuccessful()) {
             R responseObj = gson.fromJson(response.getResponse(), responseClass);
             return ResponseContainer.successful(responseObj);
-        } else if (response.isError()) {
-            GenericError genericError = gson.fromJson(response.getResponse(), GenericError.class);
-            return ResponseContainer.failure(genericError);
         } else if (response.getStatusCode() == 422) {
             return ResponseContainer.unprocessableEntity(gson.fromJson(response.getResponse(), new TypeToken<List<ServersideProcessingError>>() {
             }.getType()));
+        } else if (response.isError()) {
+            GenericError genericError = gson.fromJson(response.getResponse(), GenericError.class);
+            return ResponseContainer.failure(genericError);
         } else {
             log.warn("Received JSON of unexpected schema: {}", response.getResponse());
             return ResponseContainer.differentJson(response.getResponse());
