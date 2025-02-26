@@ -15,7 +15,6 @@
       "title": "Armaturenbrettl",
       "content": "Servus beianand bei TresorGUI!",
       "not_authed": "Du bist ned eingloggt! Moch des glei amoi.",
-      "authed": "Gfrei mi, {username}, du bist drin!",
       "login": "Einlogga"
     },
     "login": {
