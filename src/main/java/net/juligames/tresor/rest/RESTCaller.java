@@ -23,7 +23,7 @@ import java.util.Set;
  * <p><b>Features:</b></p>
  * <ul>
  *   <li><b>URL Creation:</b> Methods {@code createURL(String)} and {@code createURL(String, String)}
- *       generate URL objects from string data.</li>
+ *       generate URL objects from string balance.</li>
  *   <li><b>HTTP Requests:</b> Supports various HTTP methods (GET, POST, PUT, DELETE, PATCH, HEAD,
  *       OPTIONS, TRACE) using the {@code Method} enum.</li>
  *   <li><b>Authentication:</b> Optionally accepts a JSON Web Token (JWT) for authentication.</li>
@@ -37,7 +37,7 @@ import java.util.Set;
  *
  * <p><b>Usage Example:</b></p>
  * <pre>
- *     URL url = RESTCaller.createURL("http://example.com", "/api/data");
+ *     URL url = RESTCaller.createURL("http://example.com", "/api/balance");
  *     ResponseContainer&lt;MyResponse&gt; response = RESTCaller.call(url, "myJWT", RESTCaller.Method.GET, MyResponse.class);
  * </pre>
  *
@@ -79,7 +79,8 @@ public class RESTCaller {
             R responseObj = gson.fromJson(response.getResponse(), responseClass);
             return ResponseContainer.successful(responseObj);
         } else if (response.getStatusCode() == 422) {
-            Set<ServersideProcessingError> errors = gson.fromJson(response.getResponse(), new TypeToken<Set<ServersideProcessingError>>() {}.getType());
+            Set<ServersideProcessingError> errors = gson.fromJson(response.getResponse(), new TypeToken<Set<ServersideProcessingError>>() {
+            }.getType());
             return ResponseContainer.unprocessableEntity(errors);
         } else if (response.isError()) {
             GenericError genericError = gson.fromJson(response.getResponse(), GenericError.class);
@@ -155,7 +156,7 @@ public class RESTCaller {
 
 
     @Blocking
-    public static @NotNull <R, T> ResponseContainer<R> call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @NotNull T body, @NotNull Class<R> responseClass) {
+    public static @NotNull <R, T> ResponseContainer<R> call(@NotNull URL url, @Nullable String jwt, @NotNull Method method, @Nullable T body, @NotNull Class<R> responseClass) {
         String json = gson.toJson(body);
         log.debug("Request JSON (BODY): {}", json);
         RawResponse response = call(url, jwt, method, json);

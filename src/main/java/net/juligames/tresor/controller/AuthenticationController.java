@@ -3,6 +3,7 @@ package net.juligames.tresor.controller;
 
 import net.juligames.tresor.Tresor;
 import net.juligames.tresor.TresorGUI;
+import net.juligames.tresor.error.MissingAuthenticationException;
 import net.juligames.tresor.model.AuthenticationModel;
 import net.juligames.tresor.model.ConfigModel;
 import net.juligames.tresor.rest.*;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
+import java.util.function.Function;
 
 import static net.juligames.tresor.rest.ServersideProcessingError.handleErrors;
 
@@ -27,7 +28,7 @@ import static net.juligames.tresor.rest.ServersideProcessingError.handleErrors;
 @SuppressWarnings("ClassEscapesDefinedScope") //intended behaviour
 public class AuthenticationController {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
+    private static final @NotNull Logger log = LoggerFactory.getLogger(AuthenticationController.class);
     private final @NotNull TresorGUI gui;
 
     private @Nullable String username = null;
@@ -196,6 +197,27 @@ public class AuthenticationController {
 
     public boolean isAuthenticated() {
         return username != null && jwt != null;
+    }
+
+    record Context(@NotNull String username, @NotNull String host, @NotNull String jwt) {
+    }
+
+    /**
+     * This will only execute the action if the {@link AuthenticationController} thinks the current gui session is authenticated
+     *
+     * @param action to be executed
+     * @param <R>    type of the result
+     * @return result from the action
+     * @throws MissingAuthenticationException thrown if not authenticated (dont need to be displayed to the user, as this is handled internally by this method)
+     */
+    public <R> @NotNull ResponseContainer<R> assertAuthenticated(@NotNull Function<Context, ResponseContainer<R>> action) throws MissingAuthenticationException {
+        if (isAuthenticated()) {
+            Context context = new Context(getUsername().orElseThrow(), getHost().orElseThrow(), getJwt().orElseThrow());
+            return action.apply(context);
+        } else {
+            gui.showError("auth.not_authenticated");
+            throw new MissingAuthenticationException(gui, getClass());
+        }
     }
 
 }

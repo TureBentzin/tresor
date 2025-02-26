@@ -11,7 +11,10 @@ import com.googlecode.lanterna.gui2.Window;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.controller.BankingController;
 import net.juligames.tresor.controller.UserController;
+import net.juligames.tresor.error.MissingAuthenticationException;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +28,8 @@ import static java.util.Map.of;
  */
 public class DashboardView {
 
+
+    private static final @NotNull Logger log = LoggerFactory.getLogger(DashboardView.class);
 
     public static @NotNull Window getDashboardWindow(@NotNull TresorGUI gui) {
 
@@ -52,8 +57,6 @@ public class DashboardView {
         panel.setLayoutManager(new GridLayout(2));
         panel.addComponent((gui.getTextWithParamsAsLabel("window.dashboard.motd", false,
                 of("motd", gui.getBankingController().getMOTD()))));
-        panel.addComponent(gui.getTextWithParamsAsLabel("window.dashboard.authed", false,
-                of("username", gui.getAuthenticationController().getUsername().orElse("?"))));
 
         panel.addComponent(getAccountStatusContainer(gui));
 
@@ -76,11 +79,15 @@ public class DashboardView {
                         "username", gui.getAuthenticationController().getUsername().orElse("?")
                 )));
 
-        panel.addComponent(gui.getTextWithParamsAsLabel("window.dashboard.account.balance", false,
-                of(
-                        "balance", String.valueOf(userController.getBalance()),
-                        "currency", bankingController.getCurrency()
-                )));
+        try {
+            panel.addComponent(gui.getTextWithParamsAsLabel("window.dashboard.account.balance", false,
+                    of(
+                            "balance", String.valueOf(userController.getBalance()),
+                            "currency", bankingController.getCurrency()
+                    )));
+        } catch (MissingAuthenticationException e) {
+            log.error("Error getting balance", e);
+        }
 
 
         return panel.withBorder(Borders.singleLine(gui.getText("window.dashboard.account.title", false)));

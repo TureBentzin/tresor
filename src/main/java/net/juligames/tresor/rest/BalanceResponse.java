@@ -1,18 +1,12 @@
 package net.juligames.tresor.rest;
 
 
+import org.jetbrains.annotations.Range;
+
 /**
  * @author Ture Bentzin
  * @since 26-02-2025
  */
-public record BalanceResponse(int balance) {
-    public BalanceResponse {
-        if (balance < 0) {
-            throw new IllegalArgumentException("Balance cannot be negative");
-        }
-    }
+public record BalanceResponse(@Range(from = 0, to = Integer.MAX_VALUE) int balance) {
 
-    public int getBalance() {
-        return balance;
-    }
 }
