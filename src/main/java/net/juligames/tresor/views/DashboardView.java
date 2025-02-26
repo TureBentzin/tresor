@@ -10,10 +10,13 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.controller.BankingController;
+import net.juligames.tresor.controller.UserController;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Map.of;
 
 
 /**
@@ -48,9 +51,9 @@ public class DashboardView {
     private static void populateDashboardContainer(@NotNull TresorGUI gui, @NotNull Panel panel) {
         panel.setLayoutManager(new GridLayout(2));
         panel.addComponent((gui.getTextWithParamsAsLabel("window.dashboard.motd", false,
-                Map.of("motd", gui.getBankingController().getMOTD()))));
+                of("motd", gui.getBankingController().getMOTD()))));
         panel.addComponent(gui.getTextWithParamsAsLabel("window.dashboard.authed", false,
-                Map.of("username", gui.getAuthenticationController().getUsername().orElse("?"))));
+                of("username", gui.getAuthenticationController().getUsername().orElse("?"))));
 
         panel.addComponent(getAccountStatusContainer(gui));
 
@@ -59,20 +62,24 @@ public class DashboardView {
     private static @NotNull Container getAccountStatusContainer(@NotNull TresorGUI gui) {
         Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
 
-        BankingController controller = gui.getBankingController();
+        BankingController bankingController = gui.getBankingController();
+        UserController userController = gui.getUserController();
+
 
         panel.addComponent(gui.getTextWithParamsAsLabel("window.dashboard.account.backend", false,
-                Map.of("backend", gui.getAuthenticationController().getHost().orElse("?"))));
+                of(
+                        "backend", gui.getAuthenticationController().getHost().orElse("?")
+                )));
 
         panel.addComponent(gui.getTextWithParamsAsLabel("window.dashboard.account.username", false,
-                Map.of(
+                of(
                         "username", gui.getAuthenticationController().getUsername().orElse("?")
                 )));
 
         panel.addComponent(gui.getTextWithParamsAsLabel("window.dashboard.account.balance", false,
-                Map.of(
-                        "balance", String.valueOf(controller.getBalance()),
-                        "currency", controller.getCurrency()
+                of(
+                        "balance", String.valueOf(userController.getBalance()),
+                        "currency", bankingController.getCurrency()
                 )));
 
 

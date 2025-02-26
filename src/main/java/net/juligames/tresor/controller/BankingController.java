@@ -19,11 +19,6 @@ public class BankingController {
     }
 
     @Blocking
-    public @Range(from = 0, to = Integer.MAX_VALUE) int getBalance() {
-        return 2005;
-    }
-
-    @Blocking
     public @NotNull String getCurrency() {
         return "STC"; //STEAMCOIN$
     }
