@@ -15,8 +15,14 @@
       "title": "Dashboard",
       "content": "Welcome to TresorGUI",
       "not_authed": "You are not authenticated! Please login first.",
-      "authed": "You are authenticated as {username}.",
-      "login": "Login"
+      "login": "Login",
+      "motd": "{motd}",
+      "account": {
+        "title": "Account",
+        "balance": "Balance: {balance} {currency}",
+        "backend": "Backend: {backend}",
+        "username": "Username: {username}"
+      }
     },
     "login": {
       "title": "Login",
@@ -91,7 +97,6 @@
       }
     }
   },
-
   "menu": {
     "home": {
       "title": "Home",
