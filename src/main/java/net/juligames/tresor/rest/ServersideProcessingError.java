@@ -14,7 +14,7 @@ import java.util.Set;
  * @author Ture Bentzin
  * @since 22-02-2025
  */
-public record ServersideProcessingError(String ctx, String loc, String msg, String type) {
+public record ServersideProcessingError(Context ctx, Set<String> loc, String msg, String type) {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(ServersideProcessingError.class);
 
@@ -26,10 +26,20 @@ public record ServersideProcessingError(String ctx, String loc, String msg, Stri
         for (ServersideProcessingError error : errors) {
             gui.showError("unprocessable_entity", Map.of(
                     "msg", error.msg(),
-                    "ctx", error.ctx(),
-                    "loc", error.loc(),
+                    "ctx", error.ctx().toString(),
+                    "loc", error.getLocationsAsString(),
                     "type", error.type()
             ));
+        }
+    }
+
+    private @NotNull String getLocationsAsString() {
+        if (loc == null || loc.isEmpty()) {
+            return "?";
+        } else if (loc.size() == 1) {
+            return loc.iterator().next();
+        } else {
+            return loc.toString();
         }
     }
 }

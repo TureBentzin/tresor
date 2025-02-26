@@ -75,7 +75,7 @@ public class LoginView {
                 case USER_NOT_FOUND:
                     yield gui.showError("auth.user_not_found");
                 case FAILURE:
-                    yield true;
+                    yield false;
                 case NOT_ALLOWED:
                     yield gui.showError("auth.not_allowed");
                 case API_ERROR:

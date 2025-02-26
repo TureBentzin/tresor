@@ -15,6 +15,7 @@ import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The RESTCaller class provides static methods for sending RESTful HTTP requests.
@@ -78,8 +79,8 @@ public class RESTCaller {
             R responseObj = gson.fromJson(response.getResponse(), responseClass);
             return ResponseContainer.successful(responseObj);
         } else if (response.getStatusCode() == 422) {
-            return ResponseContainer.unprocessableEntity(gson.fromJson(response.getResponse(), new TypeToken<List<ServersideProcessingError>>() {
-            }.getType()));
+            Set<ServersideProcessingError> errors = gson.fromJson(response.getResponse(), new TypeToken<Set<ServersideProcessingError>>() {}.getType());
+            return ResponseContainer.unprocessableEntity(errors);
         } else if (response.isError()) {
             GenericError genericError = gson.fromJson(response.getResponse(), GenericError.class);
             return ResponseContainer.failure(genericError);
