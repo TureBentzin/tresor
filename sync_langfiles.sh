@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Usage: ./sync_langfiles.sh rootfile.json [-v] [-t]
-# -v for verbose output
 # -t for test mode (does not modify files)
 
 ROOT_FILE="$1"
@@ -16,9 +15,8 @@ fi
 
 # Parse arguments
 shift
-while getopts "vt" opt; do
+while getopts "t" opt; do
   case $opt in
-    v) VERBOSE=true ;;
     t) TEST_MODE=true ;;
     *) echo "Usage: $0 rootfile.json [-v] [-t]"; exit 1 ;;
   esac
@@ -61,18 +59,17 @@ for FILE in $LANG_FILES; do
     echo "$MISSING_KEYS"
   fi
 
-  if [[ -n "$EXTRA_KEYS" ]]; then
+if [[ -n "$EXTRA_KEYS" ]]; then
     echo "Removing extra keys from $FILE"
 
     for KEY in $EXTRA_KEYS; do
-      if [[ "$VERBOSE" == "true" ]]; then
         echo "Removing: $KEY"
-      fi
-      if [[ "$TEST_MODE" == "false" ]]; then
-        jq "del(.$KEY)" "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
-      fi
+        if [[ "$TEST_MODE" == "false" ]]; then
+            jq "del(.${KEY//\"/})" "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+        fi
     done
-  fi
+fi
+
 
   echo "Done processing $FILE"
 done
