@@ -69,7 +69,7 @@ for FILE in $LANG_FILES; do
         echo "Removing: $KEY"
       fi
       if [[ "$TEST_MODE" == "false" ]]; then
-        jq "del($(echo "$KEY" | awk -F'.' '{printf(".%s", $1); for (i=2; i<=NF; i++) printf "[\"%s\"]", $i}'))" "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+        jq "del(.$KEY)" "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
       fi
     done
   fi
