@@ -16,19 +16,14 @@ import static net.juligames.tresor.rest.RESTCaller.*;
  * @author Ture Bentzin
  * @since 22-02-2025
  */
-public class AuthenticationModel {
-
-    private final @NotNull String host;
+public class AuthenticationModel extends Model {
 
     public AuthenticationModel(@NotNull String host) {
-        this.host = host;
-
-        //check if host is valid
-        createURL(host);
+        super(host);
     }
 
     public @NotNull ResponseContainer<JWTResponse> authenticate(@NotNull String username, @NotNull String password) {
-        final URL url = createURL(host, "/api/v1/auth/login");
+        final URL url = createURL(getHost(), "/api/v1/auth/login");
         final Authentication authentication = new Authentication(username, password);
 
         //call REST API
@@ -37,7 +32,7 @@ public class AuthenticationModel {
 
 
     public @NotNull ResponseContainer<GenericSuccess> register(@NotNull String username, @NotNull String password) {
-        final URL url = createURL(host, "/api/v1/auth/register");
+        final URL url = createURL(getHost(), "/api/v1/auth/register");
         final Authentication authentication = new Authentication(username, password);
 
         //call REST API
