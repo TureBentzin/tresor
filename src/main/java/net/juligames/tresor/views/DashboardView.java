@@ -12,6 +12,7 @@ import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.controller.BankingController;
 import net.juligames.tresor.controller.UserController;
 import net.juligames.tresor.error.MissingAuthenticationException;
+import net.juligames.tresor.utils.ViewUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +34,11 @@ public class DashboardView {
 
     public static @NotNull Window getDashboardWindow(@NotNull TresorGUI gui) {
 
-        TresorWindow window = new TresorWindow(gui, "window.dashboard");
-        if (gui.getAuthenticationController().isAuthenticated()) {
+        return ViewUtils.authenticatedWindow(gui, "dashboard", window -> {
             Panel panel = window.getContentPanel();
             populateDashboardContainer(gui, panel);
-        } else {
-            //user not logged in
-            window.getContentPanel().addComponent(new Label(gui.getText("window.dashboard.not_authed", false)));
-            window.getContentPanel().addComponent(new Button(gui.getText("window.dashboard.login", false), () -> {
-                gui.getGui().addWindowAndWait(LoginView.getLoginWindow(gui));
-            }));
-        }
-
-        return window;
+            window.setComponent(panel);
+        });
     }
 
 

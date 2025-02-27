@@ -14,8 +14,7 @@
     "dashboard": {
       "title": "Armaturenbrettl",
       "content": "Servus beianand bei TresorGUI!",
-      "not_authed": "Du bist ned eingloggt! Moch des glei amoi.",
-      "login": "Einlogga"
+      "not_authed": "Du bist ned eingloggt! Moch des glei amoi."
     },
     "login": {
       "title": "Einlogga",

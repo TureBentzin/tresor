@@ -14,8 +14,7 @@
     "dashboard": {
       "title": "Dashboard",
       "content": "Willkommen bei TresorGUI",
-      "not_authed": "Sie sind nicht authentifiziert! Bitte melden Sie sich zuerst an.",
-      "login": "Anmelden"
+      "not_authed": "Sie sind nicht authentifiziert! Bitte melden Sie sich zuerst an."
     },
     "login": {
       "title": "Anmeldung",

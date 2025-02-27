@@ -6,7 +6,9 @@
   },
   "window": {
     "common": {
-      "close": "Close"
+      "close": "Close",
+      "login": "Login",
+      "not_authed": "You are not authenticated! Please login first."
     },
     "default": {
       "title": "TresorGUI"
@@ -15,7 +17,6 @@
       "title": "Dashboard",
       "content": "Welcome to TresorGUI",
       "not_authed": "You are not authenticated! Please login first.",
-      "login": "Login",
       "motd": "{motd}",
       "account": {
         "title": "Account",
@@ -94,6 +95,15 @@
       "title": "Information",
       "register": {
         "success": "Registration successful! You can now login."
+      }
+    },
+    "private_messages": {
+      "title": "Private Messages",
+      "content": "You have {count} unread messages.",
+      "message": {
+        "title": "Message {id}",
+        "from": "From: {from}",
+        "content": "{content}"
       }
     }
   },

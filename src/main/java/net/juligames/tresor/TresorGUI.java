@@ -7,6 +7,7 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
@@ -18,10 +19,7 @@ import net.juligames.tresor.model.ProjectPropertiesUtil;
 import net.juligames.tresor.theme.CustomThemeManager;
 import net.juligames.tresor.utils.SecureRunnableRunner;
 import net.juligames.tresor.utils.TresorExceptionHandler;
-import net.juligames.tresor.views.DashboardView;
-import net.juligames.tresor.views.DefaultWindow;
-import net.juligames.tresor.views.SettingsView;
-import net.juligames.tresor.views.TresorWindow;
+import net.juligames.tresor.views.*;
 import net.juligames.tresor.views.common.Common;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Async;
@@ -76,6 +74,28 @@ public final class TresorGUI {
         gui = new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
         gui.setTheme(CustomThemeManager.getRegisteredTheme("blaster"));
         gui.addListener((textGUI, keyStroke) -> {
+            if (keyStroke.isCtrlDown() && keyStroke.getCharacter() == 'c') {
+                quit();
+                return true;
+            }
+            if (keyStroke.getKeyType().equals(KeyType.F1)) {
+                switchWindow(DashboardView.getDashboardWindow(this));
+                return true;
+            }
+
+            if (keyStroke.getKeyType().equals(KeyType.F2)) {
+                switchWindow(PrivateMessagesView.getPrivateMessagesWindow(this));
+                return true;
+            }
+            if (keyStroke.getKeyType().equals(KeyType.F3)) {
+                switchWindow(SettingsView.getSettingsWindow(this));
+                return true;
+            }
+            if (keyStroke.getKeyType().equals(KeyType.F5)) {
+                log.info("Refreshing...");
+                gui.getActiveWindow().invalidate();
+                return true;
+            }
             log.debug("unhandled key event: {}", keyStroke);
             return false;
         });
