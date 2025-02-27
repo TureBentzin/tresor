@@ -104,6 +104,16 @@
         "title": "Message {id}",
         "from": "From: {from}",
         "content": "{content}"
+      },
+      "write_message": {
+        "title": "Write new private message",
+        "button": "Compose new",
+        "button_send": "Send",
+        "button_clear": "Clear",
+        "recipient": "To : ",
+        "message": "Message: ",
+        "default": "\n\n~{sender}@{brand}"
+
       }
     }
   },

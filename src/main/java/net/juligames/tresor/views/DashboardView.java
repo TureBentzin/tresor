@@ -37,7 +37,6 @@ public class DashboardView {
         return ViewUtils.authenticatedWindow(gui, "dashboard", window -> {
             Panel panel = window.getContentPanel();
             populateDashboardContainer(gui, panel);
-            window.setComponent(panel);
         });
     }
 
