@@ -10,12 +10,10 @@ import org.jetbrains.annotations.Range;
  * @author Ture Bentzin
  * @since 19-02-2025
  */
-public class BankingController {
-
-    private final @NotNull TresorGUI gui;
+public class BankingController extends AbstractController {
 
     public BankingController(@NotNull TresorGUI gui) {
-        this.gui = gui;
+        super(gui);
     }
 
     @Blocking

@@ -20,13 +20,12 @@ import java.util.Set;
  * @author Ture Bentzin
  * @since 26-02-2025
  */
-public class UserController {
+public class UserController extends AbstractController {
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(UserController.class);
-    private final @NotNull TresorGUI gui;
 
     public UserController(@NotNull TresorGUI gui) {
-        this.gui = gui;
+        super(gui);
     }
 
     public @Range(from = 0, to = Integer.MAX_VALUE) int getBalance() throws MissingAuthenticationException {
