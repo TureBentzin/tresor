@@ -18,6 +18,15 @@ public record ServersideProcessingError(Context ctx, Set<String> loc, String msg
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(ServersideProcessingError.class);
 
+    public ServersideProcessingError{
+        if(ctx == null) {
+            ctx = new Context(Map.of());
+        }
+        if(loc == null) {
+            loc = Set.of();
+        }
+    }
+
     public static void handleErrors(@NotNull TresorGUI gui, @Nullable Set<ServersideProcessingError> errors) {
         if (errors == null) {
             log.warn("No errors to handle! This method should not be called with null");

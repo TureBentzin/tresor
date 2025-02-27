@@ -106,7 +106,7 @@ public class AuthenticationController {
                 }
                 case DIFFERENT_JSON -> AuthenticationResult.API_ERROR;
                 case UNPROCESSABLE_ENTITY -> {
-                    handleErrors(gui, Objects.requireNonNull(jwt.getUnprocessableEntity()));
+                    handleErrors(gui, jwt.getUnprocessableEntity());
                     yield AuthenticationResult.FAILURE;
                 }
             };

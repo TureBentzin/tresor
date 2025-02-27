@@ -13,6 +13,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import net.juligames.tresor.controller.AuthenticationController;
 import net.juligames.tresor.controller.BankingController;
+import net.juligames.tresor.controller.PrivateMessageController;
 import net.juligames.tresor.controller.UserController;
 import net.juligames.tresor.lang.Translations;
 import net.juligames.tresor.model.ProjectPropertiesUtil;
@@ -58,6 +59,7 @@ public final class TresorGUI {
     private final @NotNull AuthenticationController authenticationController;
     private final @NotNull BankingController bankingController;
     private final @NotNull UserController userController;
+    private final @NotNull PrivateMessageController privateMessageController;
 
     public TresorGUI(@NotNull TelnetTerminal terminal) throws IOException {
         this.terminal = terminal;
@@ -65,6 +67,7 @@ public final class TresorGUI {
         authenticationController = new AuthenticationController(this);
         bankingController = new BankingController(this);
         userController = new UserController(this);
+        privateMessageController = new PrivateMessageController(this);
 
         handle();
     }
@@ -303,5 +306,9 @@ public final class TresorGUI {
 
     public @NotNull UserController getUserController() {
         return userController;
+    }
+
+    public @NotNull PrivateMessageController getPrivateMessageController() {
+        return privateMessageController;
     }
 }

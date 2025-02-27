@@ -71,7 +71,10 @@ public class PrivateMessagesView {
         Button sendButton = new Button(gui.getText("window.private_messages.write_message.button_send", false));
         sendButton.addListener(e -> {
             //send message
-            log.info("Sending \"{}\" to: {}", message.getText(), recipient.getSelectedItem());
+            try {
+                gui.getPrivateMessageController().sendMessage(message.getText(), recipient.getSelectedItem());
+            } catch (MissingAuthenticationException ignored) {
+            }
             window.close();
         });
         panel.addComponent(sendButton);
