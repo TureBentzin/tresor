@@ -3,6 +3,7 @@ package net.juligames.tresor.views.common;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.views.common.menu.AboutMenu;
+import net.juligames.tresor.views.common.menu.AppMenu;
 import net.juligames.tresor.views.common.menu.HomeMenu;
 import net.juligames.tresor.views.common.menu.SettingsMenu;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,10 @@ public class Common {
     public static @NotNull MenuBar getMenu(@NotNull TresorGUI tresorGUI) {
         MenuBar menuBar = new MenuBar();
         menuBar.add(HomeMenu.getHomeMenu(tresorGUI));
+        if (tresorGUI.getAuthenticationController().isAuthenticated()) {
+            menuBar.add(AppMenu.getAppMenu(tresorGUI));
+        }
+
         menuBar.add(AboutMenu.getAboutMenu(tresorGUI));
         menuBar.add(SettingsMenu.getSystemMenu(tresorGUI));
         return menuBar;

@@ -130,6 +130,12 @@
         "title": "Register"
       }
     },
+    "app" : {
+      "title": "App",
+      "private_messages": {
+        "title": "Private Messages"
+      }
+    },
     "about": {
       "title": "About",
       "version": {
