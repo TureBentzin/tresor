@@ -5,10 +5,11 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, makeWrapper, maven }:
+  outputs = { self, nixpkgs}:
   let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
     jdk23 = pkgs.jdk23;
+    maven = pkgs.maven;
   in {
     packages.x86_64-linux.default = maven.buildMavenPackage rec {
       pname = "tresor";
@@ -18,7 +19,7 @@
 
       mvnHash = "";
 
-      nativeBuildInputs = [ makeWrapper ];
+      nativeBuildInputs = with pkgs; [ makeWrapper ];
 
       installPhase = ''
         mkdir -p $out/bin $out/share/tresor
