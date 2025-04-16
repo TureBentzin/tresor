@@ -113,7 +113,14 @@
         "recipient": "To : ",
         "message": "Message: ",
         "default": "\n\n~{sender}@{brand}"
-
+      },
+      "conversation": {
+        "title": "Your conversations",
+        "element": {
+          "title": "{sender} -> You",
+          "read" : "Read",
+          "content": "{message}"
+        }
       }
     }
   },
