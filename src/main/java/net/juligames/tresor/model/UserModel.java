@@ -31,7 +31,7 @@ public class UserModel extends Model {
         final URL url = createURL(getHost(), "/api/v1/user/valid_recipients");
 
         //TODO
-        Set<String> usernames = Set.of("tdr1234", "test", "bommels");
+        Set<String> usernames = Set.of("tdr1234", "test", "bommels", "befator");
         return ResponseContainer.successful(new ValidUsernames(usernames));
     }
 
