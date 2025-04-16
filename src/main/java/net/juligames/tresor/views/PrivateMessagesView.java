@@ -4,19 +4,19 @@ package net.juligames.tresor.views;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.table.TableModel;
 import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.error.MissingAuthenticationException;
 import net.juligames.tresor.model.ProjectPropertiesUtil;
 import net.juligames.tresor.rest.InboxElement;
 import net.juligames.tresor.utils.ViewUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.Transient;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Ture Bentzin
@@ -28,15 +28,24 @@ public class PrivateMessagesView {
 
     public static @NotNull Window getPrivateMessagesWindow(@NotNull TresorGUI gui) {
         return ViewUtils.authenticatedWindow(gui, "private_messages", window -> {
-            Panel panel = window.getContentPanel();
+            //Panel panel = window.getContentPanel();
 
-            panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+            //Button writeMessageButton = new Button(gui.getText("window.private_messages.write_message.button", false));
+            // writeMessageButton.addListener(e -> openWriteMessageWindow(gui, window));
 
+            Panel conversation = new Panel();
+
+            SplitPanel panel = SplitPanel.ofHorizontal(getConversationSelection(gui, conversation), getConversationContainer(gui, null, conversation));
             Button writeMessageButton = new Button(gui.getText("window.private_messages.write_message.button", false));
-            writeMessageButton.addListener(e -> openWriteMessageWindow(gui, window));
+
+
+            writeMessageButton.addListener(e -> {
+                openWriteMessageWindow(gui, window);
+            });
+
             panel.addComponent(writeMessageButton);
 
-            panel.addComponent(getConversationContainer(gui));
+            window.setComponent(panel.withBorder(Borders.singleLine(gui.getText("window.private_messages.conversation.title", false))));
         });
     }
 
@@ -51,28 +60,41 @@ public class PrivateMessagesView {
         return comboBox;
     }
 
-
-    public static @NotNull Container getConversationContainer(@NotNull TresorGUI gui) {
+    public static @NotNull Container getConversationSelection(@NotNull TresorGUI gui, @NotNull Panel conversation) {
         Panel panel = new Panel();
-        panel.setLayoutManager(new GridLayout(2)); //TODO make this dynamic?
+        panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
-       /* try {
+        Table<String> conversationTable = new Table<>("Conversations");
 
-        } catch (MissingAuthenticationException ignored) {
+        //TODO: add all active conversations
+        TableModel<String> objectTableModel = new TableModel<>();
+        objectTableModel.addColumn("Partner", new String[]{});
+        objectTableModel.addRow("A1");
+        objectTableModel.addRow("A2");
 
-        }
-        */
+        conversationTable.setTableModel(objectTableModel);
 
-        appendUnreadInboxElements(gui, panel);
+        conversationTable.setSelectAction(() -> {
+            String selected = objectTableModel.getCell(conversationTable.getSelectedRow(), 0);
+            log.debug("Selected conversation: {}", selected);
+
+            getConversationContainer(gui, selected, conversation);
+        });
+
+        panel.addComponent(conversationTable);
 
         return panel.withBorder(Borders.singleLine(gui.getText("window.private_messages.conversation.title", false)));
     }
 
-    private static void appendUnreadInboxElements(@NotNull TresorGUI gui, @NotNull Panel panel) {
+    private static Container getConversationContainer(@NotNull TresorGUI gui, @Nullable String partner, @NotNull Panel panel) {
         InboxElement test = new InboxElement("This is a message", "Sender", false);
         InboxElement test1 = new InboxElement("Please care about the usage!", "TDR", false);
         InboxElement test2 = new InboxElement("Help my chess account was compromised!", "RilxDarki", false);
         InboxElement test3 = new InboxElement("Did you ever think about rewriting this server in rust?\n You know that oxidizing it would improve performance by a lot!\n I would suggest rewriting it in rust. Whatever. How much is 100 Steam Trucks at your shop? How much Cargo do they hold?", "DSeeLP", false);
+
+        panel.removeAllComponents();
+
+        panel.addComponent(new Label("Conversation with: " + partner)); //TODO
 
         Set<InboxElement> elements = Set.of(test, test1, test2, test3);
 
@@ -107,8 +129,7 @@ public class PrivateMessagesView {
             panel.addComponent(new EmptySpace(TerminalSize.ONE));
         });
 
-
-
+        return panel;
     }
 
     public static @NotNull Container getArchivedMessageContainer(@NotNull TresorGUI gui, int messageID) {

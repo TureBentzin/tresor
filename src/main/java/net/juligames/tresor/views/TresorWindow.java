@@ -6,14 +6,19 @@ import net.juligames.tresor.TresorGUI;
 import net.juligames.tresor.model.ProjectPropertiesUtil;
 import net.juligames.tresor.views.common.Common;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("DeprecatedIsStillUsed")
 public class TresorWindow extends BasicWindow {
 
+    private static final Logger log = LoggerFactory.getLogger(TresorWindow.class);
     private boolean permanent;
     private final @NotNull String contentName;
 
@@ -79,6 +84,40 @@ public class TresorWindow extends BasicWindow {
         }
 
         super.setComponent(component);
+    }
+
+    /**
+     * ONLY USE THIS IF YOU EXACTLY KNOW WHAT YOU ARE DOING!
+     * @param containerA The first container
+     * @param containerB The second container
+     *  @param horizontal If true, the containers will be split horizontally, otherwise vertically
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    @ApiStatus.Internal
+    @Contract(mutates = "this")
+    public void split(@NotNull Container containerA, @NotNull Container containerB, boolean horizontal) {
+        if (containerA == containerB) throw new IllegalArgumentException("Container A and B must be different!");
+        if (contentPanel.getChildCount() > 0) throw new IllegalStateException("Content panel already has children!");
+
+        SplitPanel panel = horizontal
+                ? SplitPanel.ofHorizontal(containerA, containerB)
+                : SplitPanel.ofVertical(containerA, containerB);
+
+        // edit contentPanel with reflection
+        synchronized (contentPanel) {
+            try {
+                Field field = getClass().getField("contentPanel");
+                field.setAccessible(true);
+                field.set(this, panel);
+                field.setAccessible(false);
+
+                //success:
+                setComponent(panel.withBorder(Borders.singleLineBevel(contentName)));
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                log.error("I said you should only use this if you know what you are doing!");
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public @NotNull Panel getContentPanel() {
