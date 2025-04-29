@@ -1,6 +1,7 @@
 package net.juligames.tresor.views;
 
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.table.Table;
@@ -10,6 +11,8 @@ import net.juligames.tresor.error.MissingAuthenticationException;
 import net.juligames.tresor.model.ProjectPropertiesUtil;
 import net.juligames.tresor.rest.InboxElement;
 import net.juligames.tresor.utils.ViewUtils;
+import org.jetbrains.annotations.CheckReturnValue;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -35,17 +38,18 @@ public class PrivateMessagesView {
 
             Panel conversation = new Panel();
 
-            SplitPanel panel = SplitPanel.ofHorizontal(getConversationSelection(gui, conversation), getConversationContainer(gui, null, conversation));
+            window.split(getConversationSelection(gui, conversation), getConversationContainer(gui, null, conversation), true);
+
+            Panel panel = window.getContentPanel();
+
             Button writeMessageButton = new Button(gui.getText("window.private_messages.write_message.button", false));
 
 
-            writeMessageButton.addListener(e -> {
-                openWriteMessageWindow(gui, window);
-            });
+            writeMessageButton.addListener(e -> openWriteMessageWindow(gui, window));
 
             panel.addComponent(writeMessageButton);
 
-            window.setComponent(panel.withBorder(Borders.singleLine(gui.getText("window.private_messages.conversation.title", false))));
+            //window.setComponent(panel.withBorder(Borders.singleLine(gui.getText("window.private_messages.conversation.title", false))));
         });
     }
 
@@ -60,6 +64,7 @@ public class PrivateMessagesView {
         return comboBox;
     }
 
+    @CheckReturnValue
     public static @NotNull Container getConversationSelection(@NotNull TresorGUI gui, @NotNull Panel conversation) {
         Panel panel = new Panel();
         panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -71,13 +76,13 @@ public class PrivateMessagesView {
         objectTableModel.addColumn("Partner", new String[]{});
         objectTableModel.addRow("A1");
         objectTableModel.addRow("A2");
+        objectTableModel.addRow("A3");
 
         conversationTable.setTableModel(objectTableModel);
 
         conversationTable.setSelectAction(() -> {
-            String selected = objectTableModel.getCell(conversationTable.getSelectedRow(), 0);
+            String selected = objectTableModel.getCell(0, conversationTable.getSelectedRow());
             log.debug("Selected conversation: {}", selected);
-
             getConversationContainer(gui, selected, conversation);
         });
 
@@ -86,7 +91,9 @@ public class PrivateMessagesView {
         return panel.withBorder(Borders.singleLine(gui.getText("window.private_messages.conversation.title", false)));
     }
 
-    private static Container getConversationContainer(@NotNull TresorGUI gui, @Nullable String partner, @NotNull Panel panel) {
+    @Contract("_, _, _ -> param3")
+    @CanIgnoreReturnValue
+    private synchronized static @NotNull Container getConversationContainer(@NotNull TresorGUI gui, @Nullable String partner, @NotNull Panel panel) {
         InboxElement test = new InboxElement("This is a message", "Sender", false);
         InboxElement test1 = new InboxElement("Please care about the usage!", "TDR", false);
         InboxElement test2 = new InboxElement("Help my chess account was compromised!", "RilxDarki", false);
@@ -95,39 +102,43 @@ public class PrivateMessagesView {
         panel.removeAllComponents();
 
         panel.addComponent(new Label("Conversation with: " + partner)); //TODO
+        Button closeButton = new Button(gui.getText("window.private_messages.conversation.close", false), () -> {
+            getConversationContainer(gui, null, panel);
+        });
+        panel.addComponent(closeButton);
 
         Set<InboxElement> elements = Set.of(test, test1, test2, test3);
+        if (partner != null)
+            elements.forEach(element -> {
+                // build element container
+                Panel elementContainer = new Panel();
+                elementContainer.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
-        elements.forEach(element -> {
-            // build element container
-            Panel elementContainer = new Panel();
-            elementContainer.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+                TextBox content = new TextBox();
 
-            TextBox content = new TextBox();
+                content.setText(gui.getTextWithParams("window.private_messages.conversation.element.content", false,
+                        Map.of(
+                                "message", element.message(),
+                                "sender", element.sender()
+                        )
+                ));
 
-            content.setText(gui.getTextWithParams("window.private_messages.conversation.element.content", false,
-                    Map.of(
-                            "message", element.message(),
-                            "sender", element.sender()
-                    )
-            ));
+                content.setReadOnly(true);
+                content.setPreferredSize(new TerminalSize(80, 5));
 
-            content.setReadOnly(true);
-            content.setPreferredSize(new TerminalSize(80, 5));
+                elementContainer.addComponent(content);
 
-            elementContainer.addComponent(content);
+                // add button to mark as read
+                Button markAsReadButton = new Button(gui.getText("window.private_messages.conversation.element.read", true));
 
-            // add button to mark as read
-            Button markAsReadButton = new Button(gui.getText("window.private_messages.conversation.element.read", true));
-
-            elementContainer.addComponent(markAsReadButton);
-            Container container = elementContainer.withBorder(Borders.singleLine(gui.getTextWithParams("window.private_messages.conversation.element.title", false,
-                    Map.of(
-                            "sender", element.sender()
-                    ))));
-            panel.addComponent(container);
-            panel.addComponent(new EmptySpace(TerminalSize.ONE));
-        });
+                elementContainer.addComponent(markAsReadButton);
+                Container container = elementContainer.withBorder(Borders.singleLine(gui.getTextWithParams("window.private_messages.conversation.element.title", false,
+                        Map.of(
+                                "sender", element.sender()
+                        ))));
+                panel.addComponent(container);
+                panel.addComponent(new EmptySpace(TerminalSize.ONE));
+            });
 
         return panel;
     }

@@ -106,7 +106,7 @@ public class TresorWindow extends BasicWindow {
         // edit contentPanel with reflection
         synchronized (contentPanel) {
             try {
-                Field field = getClass().getField("contentPanel");
+                Field field = getClass().getDeclaredField("contentPanel");
                 field.setAccessible(true);
                 field.set(this, panel);
                 field.setAccessible(false);
