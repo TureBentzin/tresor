@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Usage: ./sync_langfiles.sh rootfile.json [-v] [-t]
 # -t for test mode (does not modify files)
