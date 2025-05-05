@@ -3,9 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
-  outputs = { self, nixpkgs}:
+  outputs = { self, nixpkgs, treefmt-nix}:
   let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
     jdk23 = pkgs.jdk23;
@@ -15,7 +20,7 @@
       pname = "tresor";
       version = "1.0-SNAPSHOT";
 
-      src = "./";
+      src = ./.;
 
       mvnHash = "";
 
@@ -30,9 +35,8 @@
       '';
     };
 
-    # Add a development shell with nixpkgs-fmt
     devShells.x86_64-linux.default = pkgs.mkShell {
-      buildInputs = [ pkgs.nixpkgs-fmt ];
+      buildInputs = with pkgs; [jdk23 maven ];
     };
   };
 }
