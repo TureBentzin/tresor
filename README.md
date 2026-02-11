@@ -25,7 +25,7 @@ The user interface of Tresor provides a 2000s-style GUI, focusing on easy naviga
 
 The application was initially designed around the following legacy API:
 
-[Steamcoin API Documentation](http://wiki.befatorinc.de/index.php/Steamcoin_API_Documentation)
+[Steamcoin API Documentation](https://wiki.befatorinc.de/index.php/Steamcoin_API_Documentation)
 
 This project will implement the new API as soon as it gets released. I have no authority over the API project and can't
 provide information apart from the website.
